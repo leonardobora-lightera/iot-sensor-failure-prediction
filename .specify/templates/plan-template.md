@@ -31,7 +31,13 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+Gates are determined based on the project's constitution at `.specify/memory/constitution.md`. For this project the `Constitution Check` MUST minimally include:
+
+- Preservation assertions for ground-truth signals (e.g., `msg_type == 6` counts before/after filtering)
+- Presence of an explicit exploratory analysis artifact (notebook) for dataset assumptions
+- A brief data validation checklist that asserts error taxonomy (`buffer_error`) is surfaced to downstream consumers
+
+If any of these gates fail, the plan MUST document mitigation steps before Phase 0 completes.
 
 ## Project Structure
 

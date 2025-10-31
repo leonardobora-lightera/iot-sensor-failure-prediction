@@ -5,6 +5,8 @@
 **Status**: Draft  
 **Input**: User description: "$ARGUMENTS"
 
+**Constitution Compliance**: This specification MUST reference and comply with `.specify/memory/constitution.md`. If the feature touches ingestion, filtering, or label creation, include a `Constitution Check` section with preservation assertions.
+
 ## User Scenarios & Testing *(mandatory)*
 
 <!--
