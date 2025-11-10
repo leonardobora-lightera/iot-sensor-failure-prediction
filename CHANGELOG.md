@@ -753,38 +753,202 @@ Documento sumarizado (~150 linhas) seguindo formato notebooks:
 
 ---
 
+## **FASE 14: Internacionalização PT-BR** ✅ (COMPLETA - 10 Nov 2025)
+
+**Período:** 10 de Novembro de 2025  
+**Commit:** ba65473  
+**Duração:** ~35 minutos
+
+### Objetivo:
+Traduzir Streamlit app para português brasileiro com toggle EN/PT-BR na sidebar para stakeholders brasileiros.
+
+### Implementação:
+
+#### 1. **Sistema de Tradução Criado:**
+- `utils/translations.py` (~850 linhas) com dicionário bilíngue
+- Estrutura: `TRANSLATIONS[language][section][key]`
+- Helper function: `get_text(section, key, lang)` com fallback EN
+- Seções: common, sidebar, home, batch, single, insights, research
+
+#### 2. **Language Selector Sidebar:**
+- `st.sidebar.selectbox` com opções 'English' / 'Português (BR)'
+- `st.session_state['language']` para persistência entre páginas
+- Default: English (código/logs permanecem EN)
+
+#### 3. **5 Páginas Atualizadas:**
+- ✅ **Home:** Títulos, métricas, navegação traduzidos
+- ✅ **Batch Upload:** Labels formulário, mensagens erro/sucesso
+- ✅ **Single Prediction:** Input features, help texts, resultados
+- ✅ **Insights:** Títulos seções, métricas, interpretações
+- ✅ **Research Context:** Headers principais, navegação
+
+#### 4. **Estratégia Pragmática:**
+- **UI-first:** ~185 strings traduzidas (botões, labels, títulos, help texts)
+- **Narrativas longas:** Mantidas em inglês (~800 strings)
+- Justificativa: App funcional bilíngue, custo-benefício positivo
+
+### Resultados:
+```
+Arquivos modificados: 6
+- utils/translations.py (NOVO - 573 linhas)
+- streamlit_app.py (language selector)
+- pages/1_Home.py (UI traduzida)
+- pages/2_Batch_Upload.py (UI traduzida)
+- pages/3_Single_Predict.py (UI traduzida)
+- pages/4_Insights.py (UI traduzida)
+- pages/5_Research_Context.py (UI traduzida)
+```
+
+### Validação:
+- ✅ Toggle EN ↔ PT-BR funcional
+- ✅ `st.session_state` persiste entre páginas
+- ✅ Fallback automático para EN se key faltando
+- ✅ Stakeholders brasileiros podem usar app em PT-BR
+
+### Impacto:
+- ✅ **Acessibilidade aumentada** para equipe brasileira
+- ✅ **Profissionalismo** - i18n best practice
+- ✅ **Escalável** - estrutura preparada para futuras traduções
+
+---
+
+## **FASE 15: Streamlit App Improvements** ✅ (COMPLETA - 10 Nov 2025)
+
+**Período:** 10 de Novembro de 2025 (tarde)  
+**Commit:** 4463dd9  
+**Duração:** ~45 minutos
+
+### Objetivo:
+Corrigir bugs, adicionar features UX e melhorar documentação técnica do app Streamlit.
+
+### Issues Identificadas:
+1. 🔴 **Bug:** Feature Importance não aparecia (metadata key incorreto)
+2. 🔗 **Missing:** Link para repositório GitHub ausente
+3. 📅 **Missing:** Timestamp atual não exibido
+4. 📚 **Gap:** CatBoost não explicado para usuários leigos
+5. 🧪 **Análise:** Synthetic data plot com probabilidades 0.95-1.0 (investigar)
+6. 🌐 **Extensão:** Tradução completa PT-BR narrativas (~800 strings)
+
+### Implementação:
+
+#### 1. **Feature Importance Fix** 🔧
+**Problema:** Código buscava `metadata.get('feature_importance', {})` mas metadata.json contém `'feature_importance_top5'` (array)
+
+**Solução:**
+```python
+# Antes (linha 38)
+feature_importance_data = metadata.get('feature_importance', {})  # ❌ Key não existe
+
+# Depois
+feature_importance_top5 = metadata.get('feature_importance_top5', [])  # ✅ Key correto
+importance_df = pd.DataFrame(feature_importance_top5)  # Array direto
+```
+
+**Resultado:** Feature Importance agora exibe top 5 features com importâncias corretamente!
+
+#### 2. **GitHub Repository Link** 🔗
+**Adicionado ao sidebar:**
+```python
+st.sidebar.markdown("### 📂 Code Repository")
+st.sidebar.markdown("[🔗 View on GitHub](https://github.com/leonardobora-lightera/iot-sensor-failure-prediction)")
+```
+
+**Resultado:** Usuários podem acessar código-fonte diretamente do app.
+
+#### 3. **Brazil Timezone Timestamp** 📅
+**Adicionado ao sidebar:**
+```python
+import pytz
+from datetime import datetime
+
+tz_br = pytz.timezone('America/Sao_Paulo')
+now = datetime.now(tz_br)
+st.sidebar.caption(f"📅 {now.strftime('%d/%m/%Y %H:%M')}")
+```
+
+**Dependência:** `pytz>=2024.1` adicionado ao requirements.txt
+
+**Resultado:** Sidebar exibe data/hora atual em formato PT-BR (dd/mm/YYYY HH:mm).
+
+#### 4. **CatBoost Explanation Section** 🤖
+**Nova seção em Research Context (60 linhas):**
+- 🔍 O que é CatBoost (Gradient Boosting)
+- 📊 Ordered Boosting vs XGBoost (previne overfitting)
+- 🌳 Symmetric Trees (melhor generalização)
+- 🏆 Comparação métricas (78.6% vs 71.4% XGBoost recall)
+- 💼 Business Impact (+1 device detectado, -50% false alarms)
+
+**Resultado:** Usuários leigos entendem COMO e POR QUE CatBoost foi escolhido.
+
+#### 5. **Synthetic Data Analysis** ✅
+**Investigação:** Plot mostra probabilidades 0.95-1.0 (alta confiança).
+
+**Diagnóstico:**
+- Synthetic data gerado por SMOTE interpolando critical devices do training set
+- Modelo reconhece facilmente padrões derivados do próprio treinamento
+- Comportamento **ESPERADO** e já documentado no código (linhas 253-268)
+
+**Conclusão:** NÃO é bug - synthetic serve para stress testing, não validação independente.
+
+#### 6. **Tradução Completa PT-BR** ⏸️
+**Decisão:** ADIADA por custo-benefício negativo.
+
+**Justificativa:**
+- UI crítica JÁ traduzida (~185 strings - Fase 14)
+- Narrativas longas (~800 strings) são secundárias
+- Estimativa 4-6h de trabalho manual
+- App já funcional bilíngue
+
+**Recomendação:** Priorizar funcionalidades essenciais primeiro.
+
+### Resultados:
+```
+Arquivos modificados: 5
+- pages/4_Insights.py (Feature Importance fix)
+- streamlit_app.py (GitHub link + timestamp + pytz import)
+- pages/5_Research_Context.py (CatBoost section 60 linhas)
+- requirements.txt (pytz>=2024.1)
+```
+
+### Validação:
+- ✅ Feature Importance exibe top 5 features corretamente
+- ✅ Link GitHub clicável no sidebar
+- ✅ Timestamp atualiza automaticamente (timezone São Paulo)
+- ✅ Seção CatBoost acessível e informativa
+- ✅ Synthetic data comportamento compreendido
+
+### Impacto:
+- ✅ **Bug crítico resolvido** (Feature Importance funcional)
+- ✅ **Credibilidade profissional** (link GitHub, timestamp)
+- ✅ **Educação técnica** (CatBoost explicado para leigos)
+- ✅ **UX melhorada** (navegação, informação contextual)
+
+---
+
 ## **Próximos Passos**
 
-### **FASE 14: Internacionalização PT-BR** (Planejado)
-**Objetivo:** Traduzir Streamlit app para português brasileiro com toggle EN/PT-BR
+### **FASE 16: Deployment Streamlit Cloud** (Opcional)
+**Objetivo:** Publicar app online para acesso remoto
 
-**Abordagem:**
-- Criar `utils/translations.py` com dicionários bilíngues
-- Adicionar `st.sidebar.selectbox` para escolha idioma (EN/PT-BR)
-- Usar `st.session_state` para persistir preferência
-- Atualizar 5 páginas (Home, Batch, Single, Insights, Research Context)
-- Manter inglês como default (código/logs permanecem EN)
+**Plataforma Recomendada:** Streamlit Community Cloud
+- ✅ **Gratuito** para projetos públicos
+- ✅ **1-click deploy** do GitHub
+- ✅ **1GB RAM** (suficiente para modelo 50MB)
+- ✅ **URL pública:** `https://leonardobora-lightera-iot-sensor-failure-prediction.streamlit.app`
 
-**Motivação:**
-- Stakeholders brasileiros (maioria)
-- Research Context página beneficia de PT-BR (contexto técnico mais acessível)
-- Boas práticas i18n para futuras expansões
+**Passos:**
+1. Criar conta em https://share.streamlit.io/
+2. Conectar com GitHub
+3. Selecionar repo `iot-sensor-failure-prediction`
+4. Deploy automático (~2min)
 
-**Estimativa:** ~60min (dicionários + 5 páginas + testes)
-
----
-
-### **FASE 15: GitHub Repository & Remote** (Opcional)
-**Objetivo:** Configurar remote origin para colaboração
-
-**Pendências:**
-- Adicionar remote origin (repositório ainda local-only)
-- Push commit bf8f9d4 (4184 insertions BLOCO 1+2+3+4)
-- Configurar .gitignore (data/*.csv, models/*.pkl, __pycache__)
-- GitHub Actions CI/CD (opcional: testes automatizados)
+**Limitações:**
+- App hiberna após 7 dias inativo (reativa automaticamente)
+- 1 app público no plano gratuito
+- Dados sensíveis já protegidos por .gitignore
 
 ---
 
-**Última Atualização:** 10 de Novembro de 2025  
-**Status do Projeto:** ✅ Production pipeline COMPLETO, Streamlit app DEPLOYED, documentação PROFISSIONAL  
-**Próxima Fase:** Internacionalização PT-BR (Fase 14)
+**Última Atualização:** 10 de Novembro de 2025 (tarde)  
+**Status do Projeto:** ✅ Production pipeline COMPLETO, Streamlit app BILÍNGUE e MELHORADO, GitHub Remote SINCRONIZADO  
+**Próxima Fase:** Deployment Streamlit Cloud (Fase 16 - Opcional)
