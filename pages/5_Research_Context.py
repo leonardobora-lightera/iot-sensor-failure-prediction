@@ -8,14 +8,19 @@ from pathlib import Path
 # Add project root to path
 sys.path.append(str(Path(__file__).parent.parent))
 
+from utils.translations import get_text, get_language_from_session
+
+# Get language
+lang = get_language_from_session(st.session_state)
+
 # Header
-st.title("📖 Research Context & Methodology")
-st.markdown("### Understanding the IoT Predictive Maintenance Problem")
+st.title(get_text('research', 'title', lang))
+st.markdown(f"### {get_text('research', 'subtitle', lang)}")
 
 st.markdown("---")
 
 # Section 1: The Problem
-st.subheader("🔧 The Business Problem")
+st.subheader(get_text('research', 'problem_title', lang))
 
 col1, col2 = st.columns([2, 1])
 

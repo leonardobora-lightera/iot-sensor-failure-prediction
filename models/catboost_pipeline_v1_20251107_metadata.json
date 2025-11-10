@@ -1,0 +1,95 @@
+{
+  "model_name": "CatBoost + SMOTE 0.5 Production Pipeline",
+  "version": "1.0",
+  "created_date": "2025-11-07 11:13:05",
+  "algorithm": "CatBoostClassifier",
+  "preprocessing": [
+    "SimpleImputer (median strategy)",
+    "SMOTE (sampling_strategy=0.5, k_neighbors=5)"
+  ],
+  "hyperparameters": {
+    "iterations": 100,
+    "depth": 6,
+    "learning_rate": 0.1,
+    "random_state": 42
+  },
+  "features": {
+    "count": 29,
+    "names": [
+      "total_messages",
+      "max_frame_count",
+      "optical_mean",
+      "optical_std",
+      "optical_min",
+      "optical_max",
+      "optical_readings",
+      "optical_below_threshold",
+      "optical_range",
+      "temp_mean",
+      "temp_std",
+      "temp_min",
+      "temp_max",
+      "temp_above_threshold",
+      "temp_range",
+      "battery_mean",
+      "battery_std",
+      "battery_min",
+      "battery_max",
+      "battery_below_threshold",
+      "snr_mean",
+      "snr_std",
+      "snr_min",
+      "rsrp_mean",
+      "rsrp_std",
+      "rsrp_min",
+      "rsrq_mean",
+      "rsrq_std",
+      "rsrq_min"
+    ]
+  },
+  "training_data": {
+    "train_samples": 552,
+    "test_samples": 237,
+    "train_critical": 31,
+    "test_critical": 14
+  },
+  "performance": {
+    "recall": 0.7857142857142857,
+    "precision": 0.8461538461538461,
+    "f1_score": 0.8148148148148148,
+    "roc_auc": 0.8621076233183855,
+    "true_positives": 11,
+    "false_positives": 2,
+    "false_negatives": 3,
+    "true_negatives": 221
+  },
+  "feature_importance_top5": [
+    {
+      "feature": "max_frame_count",
+      "importance": 51.80312327769672
+    },
+    {
+      "feature": "total_messages",
+      "importance": 11.676962443993984
+    },
+    {
+      "feature": "optical_readings",
+      "importance": 3.6237114005178888
+    },
+    {
+      "feature": "optical_below_threshold",
+      "importance": 3.0764468061457477
+    },
+    {
+      "feature": "rsrq_std",
+      "importance": 3.026971791960503
+    }
+  ],
+  "deployment_notes": [
+    "Model detects 78.6% of critical devices (11/14 on test set)",
+    "Precision 84.6% - only 2 false alarms per 237 devices (0.8% FP rate)",
+    "Input: 29 clean features (no msg6_count/rate leakage)",
+    "Output: Binary prediction (0/1) + probability (0.0-1.0)",
+    "Requires: Python 3.12+, catboost, imbalanced-learn, scikit-learn, pandas, numpy"
+  ]
+}

@@ -11,10 +11,14 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 from utils.model_loader import load_pipeline, load_metadata
 from utils.visualization import create_metric_gauge
+from utils.translations import get_text, get_language_from_session
+
+# Get language
+lang = get_language_from_session(st.session_state)
 
 # Header
-st.title("🔍 Single Device Prediction")
-st.markdown("Enter features for a single device to get instant risk assessment and recommendations.")
+st.title(get_text('single', 'title', lang))
+st.markdown(get_text('single', 'subtitle', lang))
 
 st.markdown("---")
 

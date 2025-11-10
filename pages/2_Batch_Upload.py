@@ -17,10 +17,14 @@ from utils.preprocessing import (
     prepare_for_prediction,
     REQUIRED_FEATURES
 )
+from utils.translations import get_text, get_language_from_session
+
+# Get language
+lang = get_language_from_session(st.session_state)
 
 # Header
-st.title("📤 Batch Upload - Bulk Device Prediction")
-st.markdown("Upload a CSV file with device features to get predictions for multiple devices at once.")
+st.title(get_text('batch', 'title', lang))
+st.markdown(get_text('batch', 'subtitle', lang))
 
 st.markdown("---")
 

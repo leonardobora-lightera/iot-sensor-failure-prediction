@@ -16,10 +16,14 @@ from utils.visualization import (
     plot_confusion_matrix,
     plot_probability_distribution
 )
+from utils.translations import get_text, get_language_from_session
+
+# Get language
+lang = get_language_from_session(st.session_state)
 
 # Header
-st.title("📊 Model Insights & Performance")
-st.markdown("Explore model behavior, feature importance, and validation results.")
+st.title(get_text('insights', 'title', lang))
+st.markdown(get_text('insights', 'subtitle', lang))
 
 st.markdown("---")
 

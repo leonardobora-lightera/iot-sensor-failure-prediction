@@ -9,6 +9,10 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 from utils.model_loader import load_metadata
+from utils.translations import get_text, get_language_from_session
+
+# Get language
+lang = get_language_from_session(st.session_state)
 
 # Load metadata
 try:
@@ -23,46 +27,46 @@ except:
     }
 
 # Header
-st.title("🏠 IoT Critical Device Prediction")
-st.markdown("### Machine Learning Model for Preventive Maintenance")
+st.title(get_text('home', 'title', lang))
+st.markdown(f"### {get_text('home', 'subtitle', lang)}")
 
 st.markdown("---")
 
 # Headline Metrics
-st.subheader("📈 Model Performance Highlights")
+st.subheader(get_text('home', 'performance_title', lang))
 
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.metric(
-        label="**Recall**",
+        label=f"**{get_text('home', 'recall_label', lang)}**",
         value=f"{metrics.get('recall', 0.786):.1%}",
         delta="+28.6% vs baseline",
-        help="Percentage of critical devices correctly detected (11/14)"
+        help=get_text('home', 'recall_help', lang)
     )
 
 with col2:
     st.metric(
-        label="**Precision**",
+        label=f"**{get_text('home', 'precision_label', lang)}**",
         value=f"{metrics.get('precision', 0.846):.1%}",
         delta="+4.6% vs target (80%)",
-        help="Accuracy of critical predictions (only 2 false alarms)"
+        help=get_text('home', 'precision_help', lang)
     )
 
 with col3:
     st.metric(
-        label="**F1-Score**",
+        label=f"**{get_text('home', 'f1_label', lang)}**",
         value=f"{metrics.get('f1_score', 0.815):.1%}",
-        delta="Balanced performance",
-        help="Harmonic mean of precision and recall"
+        delta="Balanced performance" if lang == 'en' else "Performance balanceada",
+        help=get_text('home', 'f1_help', lang)
     )
 
 with col4:
     st.metric(
-        label="**ROC-AUC**",
+        label=f"**{get_text('home', 'auc_label', lang)}**",
         value=f"{metrics.get('roc_auc', 0.8621):.4f}",
-        delta="Excellent discrimination",
-        help="Area under ROC curve (0.5=random, 1.0=perfect)"
+        delta="Excellent discrimination" if lang == 'en' else "Excelente discriminação",
+        help=get_text('home', 'auc_help', lang)
     )
 
 st.markdown("---")
