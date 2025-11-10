@@ -38,7 +38,8 @@ except:
 features_list = metadata.get('features', [])
 performance = metadata.get('performance', {})
 confusion_matrix_data = metadata.get('confusion_matrix', {})
-feature_importance_data = metadata.get('feature_importance', {})
+# Fix: Use 'feature_importance_top5' array from metadata
+feature_importance_top5 = metadata.get('feature_importance_top5', [])
 hyperparameters = metadata.get('hyperparameters', {})
 
 # Section 1: Model Performance Overview
@@ -139,23 +140,18 @@ st.markdown("---")
 # Section 3: Feature Importance
 st.subheader("🎯 Feature Importance Analysis")
 
-if feature_importance_data:
-    # Convert to DataFrame
-    importance_df = pd.DataFrame([
-        {'feature': k, 'importance': v * 100}
-        for k, v in feature_importance_data.items()
-    ]).sort_values('importance', ascending=False)
+if feature_importance_top5:
+    # Convert array to DataFrame
+    importance_df = pd.DataFrame(feature_importance_top5)
     
     # Plot
-    fig_importance = plot_feature_importance(importance_df, top_n=15)
+    fig_importance = plot_feature_importance(importance_df, top_n=len(importance_df))
     st.plotly_chart(fig_importance, use_container_width=True)
     
     # Top 5 interpretation
     st.markdown("### 🏆 Top 5 Most Important Features")
     
-    top5 = importance_df.head(5)
-    
-    for idx, row in top5.iterrows():
+    for idx, row in importance_df.iterrows():
         feat_name = row['feature']
         importance = row['importance']
         

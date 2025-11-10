@@ -1,6 +1,9 @@
 # Core Streamlit Framework
 streamlit>=1.40.0
 
+# Timezone Support
+pytz>=2024.1  # Brazil timezone for sidebar timestamp
+
 # Machine Learning - Model Pipeline
 catboost>=1.2.0  # CatBoost classifier (production model)
 imbalanced-learn>=0.12.0  # SMOTE resampling in pipeline

@@ -98,6 +98,72 @@ with col3:
 
 st.markdown("---")
 
+# Section 2.5: Why CatBoost?
+st.subheader("🤖 Why CatBoost? - Algorithm Explained")
+
+st.markdown("""
+**CatBoost** (Categorical Boosting) is a gradient boosting algorithm developed by Yandex. 
+We selected it over XGBoost and LightGBM based on rigorous comparison (see MODEL_COMPARISON.md).
+""")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown("""
+    **🔍 What is CatBoost?**
+    
+    CatBoost is an **advanced gradient boosting** algorithm that builds an ensemble of 
+    **decision trees sequentially**, where each tree corrects errors from previous trees.
+    
+    **Key Technical Advantages:**
+    
+    1. **Ordered Boosting** 📊
+       - Prevents **target leakage** during training
+       - Reduces overfitting compared to XGBoost's level-wise approach
+       - Uses different permutations to compute residuals
+    
+    2. **Symmetric Trees** 🌳
+       - Builds **balanced binary trees** (fewer leaves)
+       - Faster prediction time in production
+       - Better generalization on unseen data
+    
+    3. **Native Categorical Support** 🏷️
+       - Handles categorical features WITHOUT one-hot encoding
+       - Computes optimal splits using target statistics
+       - (Not used in this project - all features numerical)
+    """)
+
+with col2:
+    st.markdown("""
+    **🏆 Why CatBoost Won for This Project**
+    
+    We compared 3 algorithms using identical SMOTE 0.5 preprocessing:
+    
+    | Algorithm | Recall | Precision | F1 | False Alarms |
+    |-----------|--------|-----------|----|--------------| 
+    | XGBoost   | 71.4%  | 71.4%     | 71.4% | 4/237 (1.7%) |
+    | LightGBM  | 64.3%  | 69.2%     | 66.7% | 4/237 (1.7%) |
+    | **CatBoost** | **78.6%** | **84.6%** | **81.5%** | **2/237 (0.8%)** |
+    
+    **CatBoost delivered:**
+    - ✅ **+7.2pp recall** vs XGBoost (1 more critical device detected)
+    - ✅ **+13.2pp precision** vs XGBoost (50% fewer false alarms)
+    - ✅ **Exceeds 80% precision target** (business requirement)
+    - ✅ **21.4% miss rate** vs 28.6% XGBoost (better risk reduction)
+    
+    **Business Impact:**
+    - 11/14 critical devices detected (vs 10/14 XGBoost)
+    - Only 2 false alarms in 237 devices (vs 4 XGBoost)
+    - Optimized investigation workload
+    
+    **Technical Insight:**
+    CatBoost's **ordered boosting** likely performed better due to our 
+    **small critical sample size** (31 training critical devices). The algorithm's 
+    built-in overfitting protection proved crucial for this imbalanced dataset.
+    """)
+
+st.markdown("---")
+
 # Section 3: Key Discoveries & Lessons Learned
 st.subheader("💡 Key Discoveries & Critical Lessons")
 

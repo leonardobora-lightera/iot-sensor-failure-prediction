@@ -3,6 +3,8 @@ IoT Critical Device Prediction - Streamlit App
 Multi-page application for CatBoost model deployment
 """
 import streamlit as st
+from datetime import datetime
+import pytz
 from utils.translations import get_text, get_language_from_session
 
 # Page config
@@ -60,6 +62,19 @@ st.sidebar.metric(
     f"+4.6% {get_text('sidebar', 'precision_delta', lang)}"
 )
 st.sidebar.metric(get_text('sidebar', 'f1_score', lang), "81.5%")
+
+st.sidebar.markdown("---")
+
+# Current timestamp (Brazil timezone)
+tz_br = pytz.timezone('America/Sao_Paulo')
+now = datetime.now(tz_br)
+st.sidebar.caption(f"📅 {now.strftime('%d/%m/%Y %H:%M')}")
+
+st.sidebar.markdown("---")
+
+# GitHub Repository Link
+st.sidebar.markdown("### 📂 Code Repository")
+st.sidebar.markdown("[🔗 View on GitHub](https://github.com/leonardobora-lightera/iot-sensor-failure-prediction)")
 
 # Run selected page
 pg.run()
