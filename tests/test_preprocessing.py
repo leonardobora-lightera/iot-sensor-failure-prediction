@@ -14,6 +14,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 from utils.preprocessing import (
     REQUIRED_FEATURES,
+    TRAINING_FEATURE_ORDER,
     validate_features,
     check_feature_types,
     get_missing_stats,
@@ -292,11 +293,11 @@ class TestPrepareForPrediction:
                 assert pd.api.types.is_numeric_dtype(prepared_df[feature])
     
     def test_prepare_for_prediction_preserves_order(self, raw_df_with_extra_cols):
-        """Test that feature order matches REQUIRED_FEATURES"""
+        """Test that feature order matches TRAINING_FEATURE_ORDER (critical for sklearn)"""
         with patch('utils.preprocessing.st.info'):
             prepared_df = prepare_for_prediction(raw_df_with_extra_cols)
             
-            assert list(prepared_df.columns) == REQUIRED_FEATURES
+            assert list(prepared_df.columns) == TRAINING_FEATURE_ORDER
     
     def test_prepare_for_prediction_handles_missing(self):
         """Test that missing values are preserved (imputer handles them)"""

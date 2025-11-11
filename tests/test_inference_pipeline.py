@@ -14,7 +14,7 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from models.inference import load_model, predict_device, predict_batch
-from utils.preprocessing import REQUIRED_FEATURES, prepare_for_prediction
+from utils.preprocessing import REQUIRED_FEATURES, TRAINING_FEATURE_ORDER, prepare_for_prediction
 
 
 class TestRealModelPipeline:
@@ -70,22 +70,8 @@ class TestRealModelPipeline:
         Test that model reproduces expected performance on test set
         Expected: 11/14 critical devices detected (78.6% recall)
         """
-        # Features must be in the same order as during training
-        FEATURE_ORDER = [
-            'total_messages', 'max_frame_count',
-            'optical_mean', 'optical_std', 'optical_min', 'optical_max', 
-            'optical_readings', 'optical_below_threshold', 'optical_range',
-            'temp_mean', 'temp_std', 'temp_min', 'temp_max', 
-            'temp_above_threshold', 'temp_range',
-            'battery_mean', 'battery_std', 'battery_min', 'battery_max', 
-            'battery_below_threshold',
-            'snr_mean', 'snr_std', 'snr_min',
-            'rsrp_mean', 'rsrp_std', 'rsrp_min',
-            'rsrq_mean', 'rsrq_std', 'rsrq_min'
-        ]
-        
-        # Extract features and target
-        X_test = test_dataset[FEATURE_ORDER]
+        # Extract features in TRAINING ORDER (critical!)
+        X_test = test_dataset[TRAINING_FEATURE_ORDER]
         y_test = test_dataset['is_critical_target']
         
         # Make predictions
@@ -112,22 +98,8 @@ class TestRealModelPipeline:
     @pytest.mark.integration
     def test_single_device_prediction(self, loaded_pipeline, test_dataset):
         """Test predict_device function with single device from test set"""
-        # Features must be in the same order as during training
-        FEATURE_ORDER = [
-            'total_messages', 'max_frame_count',
-            'optical_mean', 'optical_std', 'optical_min', 'optical_max', 
-            'optical_readings', 'optical_below_threshold', 'optical_range',
-            'temp_mean', 'temp_std', 'temp_min', 'temp_max', 
-            'temp_above_threshold', 'temp_range',
-            'battery_mean', 'battery_std', 'battery_min', 'battery_max', 
-            'battery_below_threshold',
-            'snr_mean', 'snr_std', 'snr_min',
-            'rsrp_mean', 'rsrp_std', 'rsrp_min',
-            'rsrq_mean', 'rsrq_std', 'rsrq_min'
-        ]
-        
-        # Get first device features
-        first_device = test_dataset.iloc[0][FEATURE_ORDER].to_dict()
+        # Get first device features in TRAINING ORDER
+        first_device = test_dataset.iloc[0][TRAINING_FEATURE_ORDER].to_dict()
         
         # Predict
         result = predict_device(first_device, loaded_pipeline)
@@ -149,22 +121,8 @@ class TestRealModelPipeline:
     @pytest.mark.integration
     def test_batch_prediction(self, loaded_pipeline, test_dataset):
         """Test predict_batch function with multiple devices"""
-        # Features must be in the same order as during training
-        FEATURE_ORDER = [
-            'total_messages', 'max_frame_count',
-            'optical_mean', 'optical_std', 'optical_min', 'optical_max', 
-            'optical_readings', 'optical_below_threshold', 'optical_range',
-            'temp_mean', 'temp_std', 'temp_min', 'temp_max', 
-            'temp_above_threshold', 'temp_range',
-            'battery_mean', 'battery_std', 'battery_min', 'battery_max', 
-            'battery_below_threshold',
-            'snr_mean', 'snr_std', 'snr_min',
-            'rsrp_mean', 'rsrp_std', 'rsrp_min',
-            'rsrq_mean', 'rsrq_std', 'rsrq_min'
-        ]
-        
-        # Use first 50 devices from test set
-        batch_df = test_dataset.head(50)[FEATURE_ORDER].copy()
+        # Use first 50 devices in TRAINING ORDER
+        batch_df = test_dataset.head(50)[TRAINING_FEATURE_ORDER].copy()
         
         # Predict batch
         result_df = predict_batch(batch_df, loaded_pipeline)

@@ -7,9 +7,9 @@ import pandas as pd
 import numpy as np
 
 
-# 29 required features for model (based on NB08 pipeline)
+# 29 required features for model (alphabetical/grouped for validation)
 REQUIRED_FEATURES = [
-    # Telemetry (12 features)
+    # Telemetry (18 features)
     'optical_mean', 'optical_std', 'optical_min', 'optical_max',
     'optical_readings', 'optical_below_threshold', 'optical_range',
     'temp_mean', 'temp_std', 'temp_min', 'temp_max', 
@@ -22,6 +22,21 @@ REQUIRED_FEATURES = [
     'rsrq_mean', 'rsrq_std', 'rsrq_min',
     # Messages (2 features)
     'total_messages', 'max_frame_count'
+]
+
+# CRITICAL: Feature order MUST match training order (from model metadata)
+# DO NOT change this order - sklearn validates feature names match training
+TRAINING_FEATURE_ORDER = [
+    'total_messages', 'max_frame_count',
+    'optical_mean', 'optical_std', 'optical_min', 'optical_max', 
+    'optical_readings', 'optical_below_threshold', 'optical_range',
+    'temp_mean', 'temp_std', 'temp_min', 'temp_max', 
+    'temp_above_threshold', 'temp_range',
+    'battery_mean', 'battery_std', 'battery_min', 'battery_max', 
+    'battery_below_threshold',
+    'snr_mean', 'snr_std', 'snr_min',
+    'rsrp_mean', 'rsrp_std', 'rsrp_min',
+    'rsrq_mean', 'rsrq_std', 'rsrq_min'
 ]
 
 
@@ -144,7 +159,7 @@ def prepare_for_prediction(df: pd.DataFrame) -> pd.DataFrame:
     """
     Prepare DataFrame for model prediction
     
-    Extracts only required features in correct order, validates types
+    Extracts only required features in TRAINING ORDER (critical for sklearn)
     
     Parameters
     ----------
@@ -154,10 +169,10 @@ def prepare_for_prediction(df: pd.DataFrame) -> pd.DataFrame:
     Returns
     -------
     features_df : pd.DataFrame
-        Clean DataFrame with 29 features only
+        Clean DataFrame with 29 features in correct training order
     """
-    # Extract required features only
-    features_df = df[REQUIRED_FEATURES].copy()
+    # Extract required features in TRAINING ORDER
+    features_df = df[TRAINING_FEATURE_ORDER].copy()
     
     # Convert to numeric (pipeline expects float64)
     features_df = check_feature_types(features_df, show_info=False)
