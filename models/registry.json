@@ -1,0 +1,33 @@
+{
+  "registry_version": "1.0.0",
+  "models": [
+    {
+      "model_id": "catboost_v1",
+      "model_name": "CatBoost IoT Sensor Failure Predictor",
+      "version": "1.0.0",
+      "deployed_date": "2025-11-07",
+      "model_path": "models/catboost_pipeline_v1_20251107.pkl",
+      "metadata_path": "models/catboost_pipeline_v1_20251107_metadata.json",
+      "status": "active",
+      "performance_metrics": {
+        "test_set_recall": 0.7857,
+        "test_set_precision": 0.8462,
+        "test_set_f1": 0.8148,
+        "test_set_auc": 0.8621,
+        "critical_devices_detected": "11/14 (78.6%)",
+        "false_positives": 2,
+        "false_negatives": 3
+      },
+      "training_info": {
+        "training_date": "2025-11-07",
+        "training_samples": 552,
+        "critical_samples": 31,
+        "features_count": 29,
+        "algorithm": "CatBoostClassifier",
+        "preprocessing": "SimpleImputer(median) + SMOTE(0.5)"
+      },
+      "notes": "Production model selected after comprehensive optimization (Notebook 07). Outperformed XGBoost (+7.2% recall, +13.2% precision) and LightGBM. POC validated 2025-11-11 via scripts/reproduce_results.py."
+    }
+  ],
+  "notes": "POC MINIMAL REGISTRY: Tracks current production model only. For production: Add rollback strategy, previous versions history, A/B testing results, drift monitoring integration."
+}

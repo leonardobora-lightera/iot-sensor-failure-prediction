@@ -4,7 +4,7 @@ inference.py - Funções de Inferência para Modelo de Produção
 CatBoost + SMOTE 0.5 Pipeline
 
 Uso:
-    from inference import load_model, predict_device, predict_batch
+    from inference import load_model, predict_device, predict_batch, log_prediction
 
     # Carregar modelo
     pipeline = load_model('models/catboost_pipeline_v1_20251107.pkl')
@@ -14,10 +14,45 @@ Uso:
 
     # Batch prediction
     df_results = predict_batch(df_devices, pipeline)
+    
+    # Log prediction (POC exemplo audit trail)
+    log_prediction(device_id, result['prediction'], result['probability'])
 """
 
 import joblib
 import pandas as pd
+import json
+from datetime import datetime
+from pathlib import Path
+
+
+def log_prediction(device_id, prediction, probability, model_version="v1.0.0"):
+    """
+    POC EXEMPLO - Logging básico de predições para audit trail.
+    
+    Para produção: Expandir com features_hash, execution_time, user_id,
+    structured logging (logs/predictions/YYYY-MM-DD.jsonl), rotation policy.
+    
+    Args:
+        device_id (str): ID do dispositivo
+        prediction (int): Predição (0=normal, 1=critical)
+        probability (float): Probabilidade crítico
+        model_version (str): Versão do modelo usado
+    """
+    log_entry = {
+        "timestamp": datetime.now().isoformat(),
+        "device_id": device_id,
+        "prediction": "CRITICAL" if prediction == 1 else "NORMAL",
+        "probability": round(probability, 4),
+        "model_version": model_version
+    }
+    
+    # POC: Print to console (produção: save to JSON file)
+    print(f"[AUDIT] {json.dumps(log_entry)}")
+    
+    # Produção: logs_dir = Path("logs/predictions")
+    # with open(logs_dir / f"{datetime.now().strftime('%Y-%m-%d')}.jsonl", "a") as f:
+    #     f.write(json.dumps(log_entry) + "\n")
 
 
 def load_model(model_path):
