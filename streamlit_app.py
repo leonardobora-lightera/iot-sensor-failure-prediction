@@ -2,6 +2,14 @@
 IoT Critical Device Prediction - Streamlit App
 Multi-page application for CatBoost model deployment
 """
+import sys
+from pathlib import Path
+
+# Add project root to path (fix for Python 3.13 import issues)
+project_root = Path(__file__).parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+
 import streamlit as st
 from datetime import datetime
 import pytz
