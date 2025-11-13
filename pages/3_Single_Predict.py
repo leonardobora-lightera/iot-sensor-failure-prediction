@@ -244,4 +244,4 @@ if submitted:
         st.exception(e)
 
 st.markdown("---")
-st.caption("💡 **Tip:** Model learns from 29 features - ensure all values are accurate for best predictions.")
+st.caption("💡 **Tip:** Model v2 learns from 30 features (including days_since_last_message) - ensure all values are accurate for best predictions.")
