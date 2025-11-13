@@ -31,9 +31,9 @@ def load_pipeline(model_path: str = None):
         If model file doesn't exist
     """
     if model_path is None:
-        # Default to production model in models/ directory
+        # Default to production model v2 (FIELD-only) in models/ directory
         base_dir = Path(__file__).parent.parent
-        model_path = base_dir / "models" / "catboost_pipeline_v1_20251107.pkl"
+        model_path = base_dir / "models" / "catboost_pipeline_v2_field_only.pkl"
     
     try:
         pipeline = joblib.load(model_path)
@@ -55,7 +55,7 @@ def load_metadata(metadata_path: str = None):
     Parameters
     ----------
     metadata_path : str, optional
-        Path to metadata JSON. If None, uses default.
+        Path to metadata JSON. If None, uses default v2 metadata.
     
     Returns
     -------
@@ -66,7 +66,7 @@ def load_metadata(metadata_path: str = None):
     
     if metadata_path is None:
         base_dir = Path(__file__).parent.parent
-        metadata_path = base_dir / "models" / "catboost_pipeline_v1_20251107_metadata.json"
+        metadata_path = base_dir / "models" / "catboost_pipeline_v2_metadata.json"
     
     try:
         with open(metadata_path, 'r') as f:

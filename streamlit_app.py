@@ -45,23 +45,23 @@ pg = st.navigation([home_page, batch_page, single_page, insights_page, research_
 # Sidebar info
 st.sidebar.title(get_text('sidebar', 'title', lang))
 st.sidebar.markdown("---")
-st.sidebar.markdown(f"**{get_text('sidebar', 'model_version', lang)}:** v1.0")
-st.sidebar.markdown(f"**{get_text('sidebar', 'training_date', lang)}:** 2025-11-07")
+st.sidebar.markdown(f"**{get_text('sidebar', 'model_version', lang)}:** v2.0 FIELD-only")
+st.sidebar.markdown(f"**{get_text('sidebar', 'training_date', lang)}:** 2025-11-13")
 st.sidebar.markdown(f"**{get_text('sidebar', 'algorithm', lang)}:** CatBoost + SMOTE")
 st.sidebar.markdown("---")
 
 # Key metrics in sidebar
 st.sidebar.metric(
     get_text('sidebar', 'recall', lang), 
-    "78.6%", 
-    f"+28.6% {get_text('sidebar', 'recall_delta', lang)}"
+    "57.1%", 
+    f"-21.5% vs v1 (clean data)"
 )
 st.sidebar.metric(
     get_text('sidebar', 'precision', lang), 
-    "84.6%", 
-    f"+4.6% {get_text('sidebar', 'precision_delta', lang)}"
+    "57.1%", 
+    f"-27.5% vs v1"
 )
-st.sidebar.metric(get_text('sidebar', 'f1_score', lang), "81.5%")
+st.sidebar.metric("ROC-AUC", "0.9186", "+6.6% vs v1")
 
 st.sidebar.markdown("---")
 

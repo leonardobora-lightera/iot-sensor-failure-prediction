@@ -19,11 +19,12 @@ try:
     metadata = load_metadata()
     metrics = metadata.get('performance', {})
 except:
+    # Default to v2 metrics if metadata not found
     metrics = {
-        'recall': 0.786,
-        'precision': 0.846,
-        'f1_score': 0.815,
-        'roc_auc': 0.8621
+        'recall': 0.571,
+        'precision': 0.571,
+        'f1_score': 0.571,
+        'roc_auc': 0.9186
     }
 
 # Header
@@ -64,71 +65,66 @@ with col3:
 with col4:
     st.metric(
         label=f"**{get_text('home', 'auc_label', lang)}**",
-        value=f"{metrics.get('roc_auc', 0.8621):.4f}",
-        delta="Excellent discrimination" if lang == 'en' else "Excelente discriminação",
+        value=f"{metrics.get('roc_auc', 0.9186):.4f}",
+        delta="+6.6% vs v1" if lang == 'en' else "+6.6% vs v1",
         help=get_text('home', 'auc_help', lang)
     )
 
 st.markdown("---")
 
-# Project Story
-st.subheader("📖 Project Journey: From 0% to 78.6% Recall")
+# Project Evolution
+st.subheader("📖 Model Evolution: v1 (Mixed) → v2 (FIELD-only)")
 
-with st.expander("**Phase 1: Temporal Split (REJECTED)** ❌", expanded=False):
+with st.expander("**v1: Mixed FACTORY+FIELD Data** ⚠️", expanded=False):
     st.markdown("""
-    - **Approach:** Split by date (old messages → train, recent → test)
-    - **Result:** 0% recall - model couldn't detect ANY critical devices
-    - **Problem:** Data leakage (650 devices in BOTH train and test)
-    - **Lesson:** Dataset was aggregated (1 row/device), temporal split invalid
+    - **Dataset:** 789 devices (lab + production mixed)
+    - **Performance:** Recall 78.6%, Precision 84.6%, AUC 0.8621
+    - **Problem:** Lifecycle mixing contaminates production patterns
     """)
 
-with st.expander("**Phase 2: Stratified Split (VALIDATED)** ✅", expanded=False):
+with st.expander("**v2: Production-Only (FIELD) Data** ✅", expanded=True):
     st.markdown("""
-    - **Approach:** Split by device_id with stratification (31 critical train, 14 test)
-    - **Result:** 50% recall, 87.5% precision - HONEST baseline
-    - **Discovery:** Removed msg6_count/msg6_rate features (data leakage!)
-    - **Validation:** Zero overlap, balanced proportions, clean features
+    - **Dataset:** 762 devices (FIELD-only, removed 362k FACTORY messages)
+    - **Performance:** Recall 57.1%, Precision 57.1%, **AUC 0.9186** (+6.6%)
+    - **Advantage:** Clean data, better probability calibration
+    - **Philosophy:** "2 steps back, 3 forward" - solid foundation for improvements
     """)
 
-with st.expander("**Phase 3: SMOTE Optimization** 🚀", expanded=True):
+with st.expander("**Roadmap: '3 Steps Forward'** 🎯", expanded=False):
     st.markdown("""
-    - **Approach:** SMOTE 0.5 strategy to balance class imbalance (16.8:1 ratio)
-    - **Result:** 71.4% recall with XGBoost (+21.4% improvement)
-    - **Improvement:** Detected 10/14 critical devices (+3 vs baseline)
-    - **Tradeoff:** Precision dropped to 71.4% (acceptable for critical detection)
-    """)
-
-with st.expander("**Phase 4: Algorithm Optimization (FINAL)** 🏆", expanded=True):
-    st.markdown("""
-    - **Approach:** Tested XGBoost, LightGBM, CatBoost with SMOTE
-    - **Winner:** CatBoost achieved 78.6% recall, 84.6% precision
-    - **Final Result:** 11/14 critical devices detected, only 2 false alarms (0.8% FP rate)
-    - **Business Value:** Prevents 78.6% of failures with minimal investigation overhead
+    **Current trade-off:** -21.5% recall vs v1, but cleaner foundation
+    
+    **Path to exceed v1:**
+    1. **Hyperparameter Tuning** (GridSearch CatBoost) - Expected +10-15% recall
+    2. **Temporal Features (FASE 3)** - 4 new features - Expected +20% recall  
+    3. **Threshold Calibration** - Optimize decision boundary
+    
+    **Target:** Precision >80%, Recall >75% with production-only data
     """)
 
 st.markdown("---")
 
 # Business Value
-st.subheader("💼 Business Impact")
+st.subheader("💼 Model v2 Impact")
 
 col1, col2 = st.columns(2)
 
 with col1:
     st.markdown("""
-    **✅ What the Model DOES:**
-    - Detects **11 out of 14** critical devices (78.6% coverage)
-    - Only **2 false positives** in 237 devices (0.8% investigation overhead)
-    - **Balanced approach:** High recall + High precision
+    **✅ What the Model v2 DOES:**
+    - Detects **8 out of 14** critical devices (57.1% coverage)
+    - **Clean data:** FIELD-only (removed 362k FACTORY messages)
+    - **Better calibration:** AUC 0.9186 (+6.6% vs v1)
     - **Actionable insights:** Probability scores for risk prioritization
     """)
 
 with col2:
     st.markdown("""
-    **⚠️ Important Limitations:**
-    - **Miss rate:** 3 of 14 critical devices not detected (21.4%)
+    **⚠️ Current Limitations:**
+    - **Miss rate:** 6 of 14 critical devices not detected (42.9%)
+    - **No hyperparameter tuning yet** (expected +10-15% recall improvement)
+    - **Missing temporal features** (FASE 3 - expected +20% recall)
     - **Requires human validation:** ML predictions support decisions, don't replace experts
-    - **Historical training:** Model learns from past patterns (2025 data)
-    - **Fallback needed:** Combine with domain knowledge and manual inspection
     """)
 
 st.markdown("---")
@@ -139,7 +135,7 @@ st.subheader("🗺️ How to Use This Application")
 st.markdown("""
 1. **📤 Batch Upload:** Upload CSV with device features → Get predictions for all devices → Download results
 2. **🔍 Single Prediction:** Enter features for ONE device → Get instant risk assessment → See feature contributions
-3. **📊 Model Insights:** Explore feature importance → Confusion matrix → Synthetic data testing → Performance metrics
+3. **📊 Model Insights:** Explore feature importance → Confusion matrix → Performance metrics
 """)
 
 st.info("👉 Use the sidebar navigation to explore different sections of the application.")
@@ -147,4 +143,4 @@ st.info("👉 Use the sidebar navigation to explore different sections of the ap
 st.markdown("---")
 
 # Footer
-st.caption("**Model:** CatBoost + SMOTE 0.5 | **Training:** 552 devices (31 critical) | **Test:** 237 devices (14 critical) | **Date:** November 7, 2025")
+st.caption("**Model v2:** CatBoost + SMOTE 0.5 (FIELD-only) | **Training:** 533 devices (29 critical) | **Test:** 229 devices (14 critical) | **Date:** November 13, 2025")

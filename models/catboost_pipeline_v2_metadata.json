@@ -68,6 +68,12 @@
     "false_positives": 6,
     "true_negatives": 209
   },
+  "performance": {
+    "recall": 0.5714285714285714,
+    "precision": 0.5714285714285714,
+    "f1_score": 0.5714285714285714,
+    "roc_auc": 0.9186046511627908
+  },
   "improvements": [
     "Removed FACTORY (lab testing) contamination - 362,343 messages filtered (31.8%)",
     "Added days_since_last_message temporal feature (30th feature)",

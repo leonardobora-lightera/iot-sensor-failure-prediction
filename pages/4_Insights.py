@@ -48,20 +48,20 @@ st.subheader("📈 Model Performance Metrics")
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    recall = performance.get('recall', 0.786)
-    st.metric("Recall", f"{recall:.1%}", help="11/14 critical devices detected")
+    recall = performance.get('recall', 0.571)
+    st.metric("Recall", f"{recall:.1%}", help="8/14 critical devices detected (v2 FIELD-only)")
 
 with col2:
-    precision = performance.get('precision', 0.846)
-    st.metric("Precision", f"{precision:.1%}", help="84.6% of critical predictions correct")
+    precision = performance.get('precision', 0.571)
+    st.metric("Precision", f"{precision:.1%}", help="57.1% of critical predictions correct")
 
 with col3:
-    f1 = performance.get('f1_score', 0.815)
+    f1 = performance.get('f1_score', 0.571)
     st.metric("F1-Score", f"{f1:.1%}", help="Harmonic mean of precision and recall")
 
 with col4:
-    auc = performance.get('roc_auc', 0.8621)
-    st.metric("ROC-AUC", f"{auc:.4f}", help="Area under ROC curve")
+    auc = performance.get('roc_auc', 0.9186)
+    st.metric("ROC-AUC", f"{auc:.4f}", help="Area under ROC curve (+6.6% vs v1)")
 
 # Business Metrics
 st.markdown("### 💼 Business Impact Metrics")
@@ -69,8 +69,8 @@ st.markdown("### 💼 Business Impact Metrics")
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    tp = confusion_matrix_data.get('TP', 11)
-    fn = confusion_matrix_data.get('FN', 3)
+    tp = confusion_matrix_data.get('TP', 8)  # v2: 8 true positives
+    fn = confusion_matrix_data.get('FN', 6)  # v2: 6 false negatives
     total_critical = tp + fn
     st.metric(
         "Critical Detected",
@@ -79,8 +79,8 @@ with col1:
     )
 
 with col2:
-    fp = confusion_matrix_data.get('FP', 2)
-    total_devices = 237
+    fp = confusion_matrix_data.get('FP', 6)  # v2: 6 false positives
+    total_devices = 229  # v2: 229 test devices
     st.metric(
         "False Alarms",
         f"{fp}/{total_devices}",
@@ -89,7 +89,7 @@ with col2:
     )
 
 with col3:
-    tn = confusion_matrix_data.get('TN', 221)
+    tn = confusion_matrix_data.get('TN', 209)  # v2: 209 true negatives
     total_normal = tn + fp
     st.metric(
         "Normal Correctly ID'd",
