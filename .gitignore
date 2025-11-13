@@ -6,8 +6,8 @@ data/*.csv
 !payloads_processed/*.csv
 
 # Model files (large binaries)
-models/*.pkl
-*.pkl
+# models/*.pkl  # Commented to allow v2 model (127 KB is small)
+# EXCEPTION: Allow catboost_pipeline_v2_field_only.pkl (production model v2)
 
 # Python cache
 __pycache__/
