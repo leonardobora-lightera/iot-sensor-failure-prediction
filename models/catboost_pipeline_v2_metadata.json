@@ -1,0 +1,77 @@
+{
+  "model_name": "CatBoost v2 + SMOTE 0.5 (FIELD-only Production Pipeline)",
+  "version": "2.0",
+  "created_date": "2025-11-13 11:21:19",
+  "algorithm": "CatBoostClassifier",
+  "preprocessing": [
+    "SimpleImputer (median strategy)",
+    "SMOTE (sampling_strategy=0.5, k_neighbors=5)"
+  ],
+  "hyperparameters": {
+    "iterations": 100,
+    "depth": 6,
+    "learning_rate": 0.1,
+    "random_state": 42
+  },
+  "features": {
+    "total": 30,
+    "list": [
+      "total_messages",
+      "max_frame_count",
+      "days_since_last_message",
+      "optical_mean",
+      "optical_std",
+      "optical_min",
+      "optical_max",
+      "optical_readings",
+      "optical_range",
+      "optical_below_threshold",
+      "temp_mean",
+      "temp_std",
+      "temp_min",
+      "temp_max",
+      "temp_range",
+      "temp_above_threshold",
+      "battery_mean",
+      "battery_std",
+      "battery_min",
+      "battery_max",
+      "battery_below_threshold",
+      "snr_mean",
+      "snr_std",
+      "snr_min",
+      "rsrp_mean",
+      "rsrp_std",
+      "rsrp_min",
+      "rsrq_mean",
+      "rsrq_std",
+      "rsrq_min"
+    ],
+    "new_feature": "days_since_last_message"
+  },
+  "dataset": {
+    "source": "device_features_with_telemetry_field_only.csv",
+    "filter": "MODE='FIELD' (production-only, no FACTORY)",
+    "total_devices": 762,
+    "train_devices": 533,
+    "test_devices": 229,
+    "critical_devices": 46,
+    "factory_removed": 27
+  },
+  "metrics": {
+    "recall": 0.5714285714285714,
+    "precision": 0.5714285714285714,
+    "f1_score": 0.5714285714285714,
+    "roc_auc": 0.9186046511627908,
+    "true_positives": 8,
+    "false_negatives": 6,
+    "false_positives": 6,
+    "true_negatives": 209
+  },
+  "improvements": [
+    "Removed FACTORY (lab testing) contamination - 362,343 messages filtered (31.8%)",
+    "Added days_since_last_message temporal feature (30th feature)",
+    "27 FACTORY-only devices removed from training",
+    "Fixes false positives from lifecycle mixing (e.g., device 861275072515287)"
+  ]
+}
