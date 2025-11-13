@@ -41,24 +41,27 @@ col1, col2, col3, col4 = st.columns(4)
 with col1:
     st.metric(
         label=f"**{get_text('home', 'recall_label', lang)}**",
-        value=f"{metrics.get('recall', 0.786):.1%}",
-        delta="+28.6% vs baseline",
+        value=f"{metrics.get('recall', 0.571):.1%}",
+        delta="-21.5% vs v1 (clean data trade-off)",
+        delta_color="inverse",
         help=get_text('home', 'recall_help', lang)
     )
 
 with col2:
     st.metric(
         label=f"**{get_text('home', 'precision_label', lang)}**",
-        value=f"{metrics.get('precision', 0.846):.1%}",
-        delta="+4.6% vs target (80%)",
+        value=f"{metrics.get('precision', 0.571):.1%}",
+        delta="-27.5% vs v1 (clean data)",
+        delta_color="inverse",
         help=get_text('home', 'precision_help', lang)
     )
 
 with col3:
     st.metric(
         label=f"**{get_text('home', 'f1_label', lang)}**",
-        value=f"{metrics.get('f1_score', 0.815):.1%}",
-        delta="Balanced performance" if lang == 'en' else "Performance balanceada",
+        value=f"{metrics.get('f1_score', 0.571):.1%}",
+        delta="-24.4% vs v1" if lang == 'en' else "-24.4% vs v1",
+        delta_color="inverse",
         help=get_text('home', 'f1_help', lang)
     )
 
@@ -66,7 +69,7 @@ with col4:
     st.metric(
         label=f"**{get_text('home', 'auc_label', lang)}**",
         value=f"{metrics.get('roc_auc', 0.9186):.4f}",
-        delta="+6.6% vs v1" if lang == 'en' else "+6.6% vs v1",
+        delta="+6.6% vs v1 (better calibration)" if lang == 'en' else "+6.6% vs v1 (melhor calibração)",
         help=get_text('home', 'auc_help', lang)
     )
 
