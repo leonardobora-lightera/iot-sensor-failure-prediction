@@ -31,7 +31,7 @@ st.markdown("---")
 # Instructions
 with st.expander("📋 **CSV Format Requirements**", expanded=True):
     st.markdown(f"""
-    Your CSV must contain **29 required features**:
+    Your CSV must contain **30 required features** (Model v2):
     
     **Telemetry Features (18):**
     - `optical_*`: mean, std, min, max, readings, below_threshold, range
@@ -43,8 +43,9 @@ with st.expander("📋 **CSV Format Requirements**", expanded=True):
     - `rsrp_*`: mean, std, min
     - `rsrq_*`: mean, std, min
     
-    **Messaging Features (2):**
+    **Messaging Features (3):**
     - `total_messages`, `max_frame_count`
+    - `days_since_last_message` ⭐ **NEW in v2** - temporal feature (days since device last sent message)
     
     **Optional columns:** `device_id` (for identification, not used in prediction)
     

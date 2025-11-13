@@ -36,7 +36,7 @@ with st.form("prediction_form"):
     st.subheader("📝 Device Features Input")
     
     # Group features by category
-    tab1, tab2, tab3 = st.tabs(["📡 Telemetry (18)", "📶 Connectivity (9)", "📨 Messaging (2)"])
+    tab1, tab2, tab3 = st.tabs(["📡 Telemetry (18)", "📶 Connectivity (9)", "📨 Messaging (3)"])
     
     features = {}
     
@@ -105,8 +105,8 @@ with st.form("prediction_form"):
             features['rsrq_min'] = st.number_input("rsrq_min (dB)", value=-15.0, format="%.2f", key="rsrq_min")
     
     with tab3:
-        st.markdown("**Communication Volume Metrics**")
-        col1, col2 = st.columns(2)
+        st.markdown("**Communication Volume Metrics (Model v2)**")
+        col1, col2, col3 = st.columns(3)
         with col1:
             features['total_messages'] = st.number_input(
                 "total_messages",
@@ -120,6 +120,13 @@ with st.form("prediction_form"):
                 value=50.0,
                 format="%.0f",
                 help="Maximum frame count observed (communication stress indicator)"
+            )
+        with col3:
+            features['days_since_last_message'] = st.number_input(
+                "days_since_last_message ⭐",
+                value=0.0,
+                format="%.1f",
+                help="NEW in v2: Days since device last sent a message (inactivity detector)"
             )
     
     # Submit button

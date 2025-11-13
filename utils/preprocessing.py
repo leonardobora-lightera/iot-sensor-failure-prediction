@@ -7,8 +7,10 @@ import pandas as pd
 import numpy as np
 
 
-# 29 required features for model (alphabetical/grouped for validation)
+# 30 required features for model v2 (alphabetical/grouped for validation)
 REQUIRED_FEATURES = [
+    # Messaging (3 features) - includes new temporal feature
+    'total_messages', 'max_frame_count', 'days_since_last_message',
     # Telemetry (18 features)
     'optical_mean', 'optical_std', 'optical_min', 'optical_max',
     'optical_readings', 'optical_below_threshold', 'optical_range',
@@ -19,19 +21,18 @@ REQUIRED_FEATURES = [
     # Connectivity (9 features)
     'snr_mean', 'snr_std', 'snr_min',
     'rsrp_mean', 'rsrp_std', 'rsrp_min',
-    'rsrq_mean', 'rsrq_std', 'rsrq_min',
-    # Messages (2 features)
-    'total_messages', 'max_frame_count'
+    'rsrq_mean', 'rsrq_std', 'rsrq_min'
 ]
 
-# CRITICAL: Feature order MUST match training order (from model metadata)
+# CRITICAL: Feature order MUST match training order (from model v2 metadata)
 # DO NOT change this order - sklearn validates feature names match training
 TRAINING_FEATURE_ORDER = [
     'total_messages', 'max_frame_count',
+    'days_since_last_message',  # NEW in v2: temporal feature (position 3)
     'optical_mean', 'optical_std', 'optical_min', 'optical_max', 
-    'optical_readings', 'optical_below_threshold', 'optical_range',
+    'optical_readings', 'optical_range', 'optical_below_threshold',
     'temp_mean', 'temp_std', 'temp_min', 'temp_max', 
-    'temp_above_threshold', 'temp_range',
+    'temp_range', 'temp_above_threshold',
     'battery_mean', 'battery_std', 'battery_min', 'battery_max', 
     'battery_below_threshold',
     'snr_mean', 'snr_std', 'snr_min',
