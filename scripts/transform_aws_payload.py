@@ -9,7 +9,11 @@ SOLUÇÃO:
 - GroupBy device_id
 - Calcular agregações: mean, std, min, max, count
 - Aplicar thresholds (optical -28dBm, temp 70°C, battery 2.5V)
-- Gerar 29 features esperadas
+- Gerar 30 features esperadas (29 original + days_since_last_message)
+
+ATUALIZAÇÃO 13/Nov/2025:
+- Filtro MODE='FIELD': Remove FACTORY (lab testing) entries para evitar lifecycle mixing
+- Feature temporal: days_since_last_message para detectar devices inativos
 
 Baseado em: notebooks/old/02_correlacao_telemetrias_msg6.ipynb
 """
@@ -20,6 +24,7 @@ from pathlib import Path
 import logging
 from typing import Dict, List
 import sys
+from datetime import datetime
 
 # Configurar logging
 logging.basicConfig(
@@ -49,7 +54,7 @@ AWS_COLUMN_MAPPING = {
     'device_id': 'device_id'  # ou sn_fkw ou identificator_in_network
 }
 
-# Features esperadas (29 features conforme utils/preprocessing.py)
+# Features esperadas (30 features - 29 original + days_since_last_message)
 REQUIRED_FEATURES = [
     # Telemetry - Optical (7)
     'optical_mean', 'optical_std', 'optical_min', 'optical_max',
@@ -65,7 +70,9 @@ REQUIRED_FEATURES = [
     'rsrp_mean', 'rsrp_std', 'rsrp_min',
     'rsrq_mean', 'rsrq_std', 'rsrq_min',
     # Messaging (2)
-    'total_messages', 'max_frame_count'
+    'total_messages', 'max_frame_count',
+    # Temporal (1) - NOVO em 13/Nov/2025
+    'days_since_last_message'
 ]
 
 
@@ -111,6 +118,24 @@ def load_aws_payload(filepath: str) -> pd.DataFrame:
     AWS_COLUMN_MAPPING['device_id'] = device_col
     if frame_col:
         AWS_COLUMN_MAPPING['frame_count'] = frame_col
+    
+    # ⭐ NOVO: Filtrar apenas MODE='FIELD' (production-only)
+    # Remove FACTORY (lab testing) entries para evitar lifecycle mixing
+    if 'mode' in df.columns:
+        initial_count = len(df)
+        df = df[df['mode'] == 'FIELD'].copy()
+        factory_removed = initial_count - len(df)
+        factory_pct = (factory_removed / initial_count * 100) if initial_count > 0 else 0
+        
+        logger.info(f"🔧 MODE Filter Applied:")
+        logger.info(f"   - Removed {factory_removed:,} FACTORY entries ({factory_pct:.1f}%)")
+        logger.info(f"   - Remaining: {len(df):,} FIELD messages ({100-factory_pct:.1f}%)")
+        
+        if factory_removed == 0:
+            logger.warning("⚠️  No FACTORY entries found - all messages already FIELD")
+    else:
+        logger.warning("⚠️  'mode' column not found - skipping MODE filter")
+        logger.warning("     Consider adding MODE column to distinguish FACTORY vs FIELD")
     
     return df
 
@@ -223,7 +248,7 @@ def aggregate_by_device(df: pd.DataFrame) -> pd.DataFrame:
         else:
             logger.warning(f"⚠️  Coluna {signal_col} não encontrada!")
     
-    # 5. MESSAGING (total_messages, max_frame_count)
+    # 5. MESSAGING (total_messages, max_frame_count, days_since_last_message)
     logger.info("   Processando messaging...")
     
     messaging_stats = df.groupby(device_col).agg(
@@ -237,6 +262,28 @@ def aggregate_by_device(df: pd.DataFrame) -> pd.DataFrame:
         messaging_stats = messaging_stats.merge(frame_max, on=device_col)
     else:
         messaging_stats['max_frame_count'] = np.nan
+    
+    # ⭐ NOVO: days_since_last_message (temporal context)
+    # Calcular quantos dias desde última mensagem de cada device
+    timestamp_col = '@timestamp'  # Coluna padrão AWS
+    if timestamp_col in df.columns:
+        # Obter timestamp da última mensagem por device
+        last_timestamps = df.groupby(device_col)[timestamp_col].max()
+        
+        # Converter para datetime se ainda não estiver
+        last_timestamps = pd.to_datetime(last_timestamps)
+        
+        # Calcular dias desde última mensagem até agora
+        now = datetime.now()
+        days_since = (now - last_timestamps).dt.days
+        
+        # Adicionar à messaging_stats
+        messaging_stats['days_since_last_message'] = messaging_stats[device_col].map(days_since).fillna(-1).astype(int)
+        
+        logger.info(f"   ✅ days_since_last_message calculated (range: {days_since.min()}-{days_since.max()} days)")
+    else:
+        logger.warning(f"⚠️  Column '{timestamp_col}' not found - days_since_last_message set to -1")
+        messaging_stats['days_since_last_message'] = -1
     
     aggregated['messaging'] = messaging_stats
     
@@ -259,7 +306,7 @@ def aggregate_by_device(df: pd.DataFrame) -> pd.DataFrame:
 
 def validate_output(df: pd.DataFrame) -> Dict:
     """
-    Valida se output tem 29 features esperadas.
+    Valida se output tem 30 features esperadas (29 original + days_since_last_message).
     """
     logger.info("🔍 Validando output...")
     
@@ -275,7 +322,7 @@ def validate_output(df: pd.DataFrame) -> Dict:
     }
     
     if result['valid']:
-        logger.info(f"✅ VALIDAÇÃO OK: {result['present']}/29 features presentes, {result['num_devices']} devices")
+        logger.info(f"✅ VALIDAÇÃO OK: {result['present']}/30 features presentes, {result['num_devices']} devices")
     else:
         logger.error(f"❌ VALIDAÇÃO FALHOU: {len(missing_features)} features faltando:")
         for feat in missing_features:
@@ -309,7 +356,7 @@ def transform_aws_to_model_format(input_filepath: str, output_dir: str = "payloa
         input_name = Path(input_filepath).stem
         output_file = output_path / f"{input_name}_transformed.csv"
         
-        # Salvar APENAS as 29 features + device_id
+        # Salvar APENAS as 30 features + device_id
         output_columns = ['device_id'] + REQUIRED_FEATURES
         df_output = df_aggregated[output_columns].copy()
         

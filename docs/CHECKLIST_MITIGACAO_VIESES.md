@@ -24,22 +24,54 @@
 ## 1. Viés de Seleção (Selection Bias)
 
 ### ⚠️ Risco para Este Projeto
+
 **ALTO** - Dataset contém apenas devices que **reportaram logs** ao AWS
 
 ### 📌 Manifestações Possíveis
 
 #### 1.1 Devices Silenciosos
+
 **Problema:** Devices que falharam **completamente** não aparecem nos logs  
 **Exemplo:** Device com bateria totalmente esgotada não envia msg_type 6
 
-**Checklist de Mitigação:**
-- [ ] Comparar total de devices no dataset vs. devices provisionados no EyOn
-- [ ] Identificar devices com último log >30 dias atrás (possível falha silenciosa)
-- [ ] Criar métrica "% devices ativos nos últimos 30 dias"
-- [ ] Documentar no dashboard: "Análise cobre apenas devices que reportaram logs"
-- [ ] Adicionar alerta: "X devices sem logs há >30 dias - verificar status"
+**ATUALIZAÇÃO 13/Nov/2025 - VALIDADO EM PRODUÇÃO:**
+
+**Problema Específico Identificado:** Devices **INATIVOS** após testes de laboratório sendo classificados como críticos
+
+**Case Study:** Device 861275072515287
+- **Probabilidade predita:** 97.5% (HIGH RISK)
+- **Realidade:** FALSO POSITIVO por inatividade pós-laboratório
+- **Evidências:**
+  - Última comunicação: 31/10/2025 17:35 (12 dias de inatividade)
+  - Telemetrias FIELD saudáveis: optical -12.30 dBm, temp 27°C, battery 3.40V
+  - Distribuição MODE: 465 FIELD + 38 FACTORY + 174 NaN
+  - Shutdown planejado: 3x msg_type 43 (heartbeat sem telemetrias)
+
+**Problema Raiz:** Modelo agrega features de TODO o lifecycle (FACTORY + FIELD) sem contexto temporal
+
+**Checklist de Mitigação ATUALIZADO:**
+- [x] ✅ **IMPLEMENTADO:** Filtrar MODE='FIELD' em transform_aws_payload.py
+- [x] ✅ **IMPLEMENTADO:** Adicionar feature days_since_last_message
+- [ ] Retreinar modelo com features production-only (FASE 2 - Esta Semana)
+- [ ] Classificar devices: "INACTIVE_NEEDS_INVESTIGATION" (>7 dias) vs "CRITICAL_ACTIVE" (<7 dias)
+- [ ] Adicionar warning no dashboard: "X devices inativos >7 dias - não são falhas ativas"
+- [ ] Documentar no dashboard: "Análise cobre apenas devices ATIVOS em produção (MODE=FIELD)"
+- [ ] Criar métrica: "% devices ativos nos últimos 7/30 dias"
+- [ ] Implementar features temporais completas (FASE 3 - 2 semanas)
+
+**Mitigação Definitiva (ROADMAP):**
+1. **QUICK WIN (HOJE):** Filtro MODE='FIELD' + days_since_last_message
+2. **MÉDIO PRAZO (ESTA SEMANA):** Retreinamento com features production-only
+3. **LONGO PRAZO (2 SEMANAS):** Features temporais completas (FEATURE_ENGINEERING_TEMPORAL.md)
+
+**Referências:**
+- `docs/TEMPORAL_LIMITATIONS.md` - Documentação completa das limitações
+- `docs/FEATURE_ENGINEERING_TEMPORAL.md` - Roadmap de features temporais
+- `device_861275072515287_2025-11-13.csv` - Case study completo
+- `analyze_device_861275072515287.py` - Script de análise temporal
 
 #### 1.2 Firmware Antigo
+
 **Problema:** Devices com firmware antigo podem não reportar certas telemetrias (optical_power, RSSI)  
 **Exemplo:** 45% missing values em telemetrias pode indicar versão antiga
 
@@ -51,6 +83,7 @@
 - [ ] Alertar stakeholders sobre limitação de análise em devices antigos
 
 #### 1.3 Carrier-Specific Bias
+
 **Problema:** VIVO pode ter cobertura NB-IoT diferente de outras carriers  
 **Exemplo:** Padrões observados em VIVO podem não se aplicar a TIM/Claro
 
@@ -66,11 +99,13 @@
 ## 2. Viés de Sobrevivência (Survivorship Bias)
 
 ### ⚠️ Risco para Este Projeto
+
 **MÉDIO** - Já validado em 30/Out que devices se recuperam após msg_type 6
 
 ### 📌 Manifestações Possíveis
 
 #### 2.1 Devices "Condenados"
+
 **Problema:** Assumir que device com msg_type 6 está permanentemente falhado  
 **Exemplo:** "Device X tem 100 msg_type 6 → Device X está quebrado" (FALSO)
 
@@ -82,6 +117,7 @@
 - [ ] Adicionar visualização: "Timeline de falha → recuperação → nova falha"
 
 #### 2.2 Devices Substituídos
+
 **Problema:** Devices que pararam de reportar podem ter sido substituídos (não falharam)  
 **Exemplo:** Device sem logs há 60 dias pode ter sido trocado em manutenção programada
 
@@ -92,6 +128,7 @@
 - [ ] Adicionar filtro: "Excluir devices substituídos das análises"
 
 #### 2.3 Viés de "Sobreviventes Saudáveis"
+
 **Problema:** Devices que **nunca** falharam podem ter características diferentes (hardware, instalação, ambiente)  
 **Exemplo:** Devices indoor vs outdoor podem ter taxas de falha muito diferentes
 
@@ -106,11 +143,13 @@
 ## 3. Viés de Confirmação (Confirmation Bias)
 
 ### ⚠️ Risco para Este Projeto
+
 **ALTO** - Risco de buscar padrões que confirmem hipóteses pré-existentes
 
 ### 📌 Manifestações Possíveis
 
 #### 3.1 "Temperatura Causa Falhas"
+
 **Problema:** Enzo mencionou temperatura → Risco de forçar correlação temperatura × msg_type 6  
 **Exemplo:** Encontrar correlação fraca (r=0.1) e interpretar como "confirmado"
 
@@ -122,6 +161,7 @@
 - [ ] Evitar cherry-picking: Reportar **todas** correlações testadas, não só as significativas
 
 #### 3.2 "RSSI Explica Tudo"
+
 **Problema:** Notebook 02 mostrou RSRP como top correlação → Risco de focar excessivamente em sinal  
 **Exemplo:** Ignorar outros fatores (bateria, erro de firmware) ao diagnosticar falha
 
@@ -132,6 +172,7 @@
 - [ ] Evitar título simplista: "RSSI causa falhas" → Usar: "RSSI correlaciona com falhas"
 
 #### 3.3 Análise Seletiva de Devices
+
 **Problema:** Focar apenas em "serial offenders" (top 5 devices com mais msg_type 6)  
 **Exemplo:** Ignorar padrão emergente em devices com 10-50 msg_type 6
 
@@ -146,11 +187,13 @@
 ## 4. Viés Temporal (Temporal Bias)
 
 ### ⚠️ Risco para Este Projeto
+
 **ALTO** - Dataset cobre Jan-Out 2025, padrões podem mudar ao longo do tempo
 
 ### 📌 Manifestações Possíveis
 
 #### 4.1 Sazonalidade Não Identificada
+
 **Problema:** Padrões de Jan podem não se aplicar a Out  
 **Exemplo:** Temperatura externa em Jan (verão BR) vs Jul (inverno BR)
 
@@ -162,6 +205,7 @@
 - [ ] Adicionar warning se padrão muda >30% entre meses
 
 #### 4.2 Efeito de Upgrades de Firmware
+
 **Problema:** Upgrade de firmware pode reduzir msg_type 6 → Correlação espúria  
 **Exemplo:** Redução de falhas em Ago pode ser devido a firmware v1.2.0, não sazonalidade
 
@@ -173,6 +217,7 @@
 - [ ] Evitar atribuir redução a fatores ambientais se coincide com upgrade
 
 #### 4.3 Degradação Progressiva vs Eventos Pontuais
+
 **Problema:** Confundir falha progressiva (bateria degrada lentamente) com evento pontual (queda de energia)  
 **Exemplo:** "Bateria causa falhas" quando na verdade foi blackout regional
 
@@ -188,11 +233,13 @@
 ## 5. Viés de Agregação (Aggregation Bias)
 
 ### ⚠️ Risco para Este Projeto
+
 **MÉDIO** - Análises agregam dados por device_id, região, carrier, etc
 
 ### 📌 Manifestações Possíveis
 
 #### 5.1 Simpson's Paradox
+
 **Problema:** Correlação positiva em nível agregado, negativa em nível individual  
 **Exemplo:** "Temperatura alta → mais falhas" agregado, mas "Temperatura alta → menos falhas" em SP
 
@@ -204,6 +251,7 @@
 - [ ] Adicionar warning: "Padrão varia significativamente entre regiões"
 
 #### 5.2 Heterogeneidade de Devices
+
 **Problema:** Devices com hardware diferente (versões antigas vs novas) misturados na mesma análise  
 **Exemplo:** Device 2020 vs Device 2024 têm características completamente diferentes
 
@@ -215,6 +263,7 @@
 - [ ] Evitar comparar médias globais sem considerar heterogeneidade
 
 #### 5.3 Granularidade Temporal
+
 **Problema:** Agregar por dia pode esconder padrões horários  
 **Exemplo:** "Sem padrão diário" quando na verdade falhas ocorrem às 3h AM
 
@@ -230,11 +279,13 @@
 ## 6. Viés de Amostragem (Sampling Bias)
 
 ### ⚠️ Risco para Este Projeto
+
 **MÉDIO** - Dataset pode não representar população total de devices
 
 ### 📌 Manifestações Possíveis
 
 #### 6.1 Dataset Estático vs Frota Dinâmica
+
 **Problema:** Dataset cobre Jan-Out 2025, mas devices foram instalados em momentos diferentes  
 **Exemplo:** Device instalado em Set/2025 tem apenas 1 mês de dados (vs 10 meses para devices de Jan)
 
@@ -246,6 +297,7 @@
 - [ ] Evitar comparar devices novos com devices antigos sem normalizar tempo
 
 #### 6.2 Viés Geográfico
+
 **Problema:** Dataset pode ter concentração regional (ex: 80% devices em SP)  
 **Exemplo:** Padrões observados refletem SP, não Brasil
 
@@ -257,6 +309,7 @@
 - [ ] Adicionar filtro: "Análise restrita a região X"
 
 #### 6.3 Viés de Carrier (NB-IoT)
+
 **Problema:** VIVO é 90% dos devices → Padrões são específicos de VIVO, não NB-IoT genérico  
 **Exemplo:** Cobertura VIVO em SP é diferente de TIM em PE
 
@@ -272,11 +325,13 @@
 ## 7. Viés de Relatório (Reporting Bias)
 
 ### ⚠️ Risco para Este Projeto
+
 **ALTO** - Dashboard será usado por stakeholders para tomar decisões
 
 ### 📌 Manifestações Possíveis
 
 #### 7.1 Cherry-Picking de Insights
+
 **Problema:** Apresentar apenas correlações significativas, omitir correlações nulas  
 **Exemplo:** "Temperatura correlaciona (r=0.3)" mas omitir "Bateria NÃO correlaciona (r=0.05)"
 
@@ -288,6 +343,7 @@
 - [ ] Adicionar seção: "O que NÃO correlaciona" (insights por negação)
 
 #### 7.2 P-Hacking (Multiple Comparisons)
+
 **Problema:** Testar 100 correlações e reportar apenas as 5 com p<0.05  
 **Exemplo:** Com 100 testes, 5 p<0.05 aparecem **por acaso** (false positives)
 
@@ -299,6 +355,7 @@
 - [ ] Evitar data dredging: Definir hipóteses **antes** de testar
 
 #### 7.3 Visualizações Enganosas
+
 **Problema:** Escala de eixo Y manipulada para exagerar diferenças  
 **Exemplo:** Gráfico de barras com eixo Y começando em 90% (não 0%)
 
@@ -314,11 +371,13 @@
 ## 8. Viés de Interpretação (Interpretation Bias)
 
 ### ⚠️ Risco para Este Projeto
+
 **ALTO** - Stakeholders não-técnicos interpretarão resultados
 
 ### 📌 Manifestações Possíveis
 
 #### 8.1 Correlação ≠ Causação
+
 **Problema:** Stakeholder vê r=-0.22 entre RSSI e msg6_rate e conclui "RSSI causa falhas"  
 **Exemplo:** Correlação pode ser mediada por terceira variável (temperatura afeta RSSI E chip)
 
@@ -330,6 +389,7 @@
 - [ ] Evitar implicar causação em títulos de gráficos
 
 #### 8.2 "Falso Positivo" vs "Falha Real"
+
 **Problema:** msg_type 6 pode ser alarme falso (device funcionando mas reportou erro)  
 **Exemplo:** Device reporta CHIP_FAIL mas continua funcionando normalmente após reset
 
@@ -341,6 +401,7 @@
 - [ ] Adicionar contexto: "X% deste tipo de erro se resolve automaticamente"
 
 #### 8.3 "Significância Estatística" vs "Relevância Prática"
+
 **Problema:** p<0.001 mas r=0.05 → Estatisticamente significativo mas praticamente irrelevante  
 **Exemplo:** "Temperatura correlaciona significativamente (p<0.001)" mas explica apenas 0.25% da variância
 
@@ -356,11 +417,13 @@
 ## 9. Viés de Medição (Measurement Bias)
 
 ### ⚠️ Risco para Este Projeto
+
 **MÉDIO** - Telemetrias podem ter erros de medição ou calibração
 
 ### 📌 Manifestações Possíveis
 
 #### 9.1 Precisão de Sensores
+
 **Problema:** Sensor de temperatura pode ter erro ±2°C  
 **Exemplo:** Correlação temperatura × falhas pode ser ruído de medição
 
@@ -372,6 +435,7 @@
 - [ ] Evitar interpretar correlações fracas em medições ruidosas
 
 #### 9.2 Timestamp Accuracy
+
 **Problema:** @timestamp pode ter drift (relógio do device dessincronizado)  
 **Exemplo:** "Pico de falhas às 3h AM" pode ser artefato de timezone ou drift
 
@@ -383,6 +447,7 @@
 - [ ] Adicionar warning: "Precisão temporal ±5 minutos"
 
 #### 9.3 Missing Data Patterns
+
 **Problema:** Dados faltantes podem não ser aleatórios (MNAR - Missing Not At Random)  
 **Exemplo:** RSSI ausente apenas quando sinal está MUITO fraco (device não consegue enviar)
 
@@ -398,11 +463,13 @@
 ## 10. Viés Operacional (Operational Bias)
 
 ### ⚠️ Risco para Este Projeto
+
 **ALTO** - Dashboard influenciará decisões operacionais
 
 ### 📌 Manifestações Possíveis
 
 #### 10.1 Profecia Auto-Realizável
+
 **Problema:** Dashboard mostra "Device X em risco" → Técnico troca device → "Predição confirmada"  
 **Exemplo:** Device poderia ter se auto-recuperado, mas foi trocado preventivamente
 
@@ -414,6 +481,7 @@
 - [ ] Trackear intervenções: Registrar se device foi trocado ou se auto-recuperou
 
 #### 10.2 Otimização Prematura
+
 **Problema:** Stakeholder vê correlação r=-0.2 e decide investir em solução cara  
 **Exemplo:** "RSSI correlaciona → Vamos comprar 1000 amplificadores de sinal"
 
@@ -425,6 +493,7 @@
 - [ ] Adicionar seção: "Outros fatores a considerar" (temperatura, bateria, etc)
 
 #### 10.3 Tunnel Vision
+
 **Problema:** Dashboard foca em msg_type 6 → Time ignora outros problemas  
 **Exemplo:** Device sem msg_type 6 mas com bateria crítica é negligenciado
 
@@ -440,6 +509,7 @@
 ## ✅ CHECKLIST DE VALIDAÇÃO FINAL
 
 ### Antes de Publicar Dashboard
+
 - [ ] Todas visualizações têm título claro e descritivo
 - [ ] Todos eixos têm labels com unidades (°C, dBm, %, etc)
 - [ ] Disclaimers adicionados: "Correlação ≠ Causação"
@@ -452,6 +522,7 @@
 - [ ] Contact info para reportar bugs ou questionar resultados
 
 ### Antes de Apresentar para Stakeholders
+
 - [ ] Preparar slide: "Limitações desta Análise"
 - [ ] Preparar slide: "O que NÃO podemos concluir"
 - [ ] Preparar resposta: "Como validamos esses padrões?"
@@ -460,6 +531,7 @@
 - [ ] Ter análise de robustez: "Padrão se mantém em subgrupos?"
 
 ### Monitoramento Contínuo (Pós-Deploy)
+
 - [ ] Criar alerta: "Correlação mudou >30% no último mês"
 - [ ] Criar alerta: "Novo padrão detectado (não visto antes)"
 - [ ] Criar alerta: "Dataset cresceu >20% - re-validar análises"
@@ -472,16 +544,19 @@
 ## 📚 REFERÊNCIAS E RECURSOS
 
 ### Livros Recomendados
+
 1. **"Thinking, Fast and Slow"** - Daniel Kahneman (vieses cognitivos)
 2. **"The Book of Why"** - Judea Pearl (causalidade)
 3. **"Trustworthy Online Controlled Experiments"** - Kohavi et al. (A/B testing, p-hacking)
 
 ### Papers Relevantes
+
 1. **Simpson's Paradox** - IEEE Transactions on Knowledge and Data Engineering
 2. **Missing Data Mechanisms** - Little & Rubin (MCAR, MAR, MNAR)
 3. **Multiple Testing Corrections** - Bonferroni, Benjamini-Hochberg
 
 ### Ferramentas
+
 1. **Scipy.stats** - Testes estatísticos (spearmanr, pearsonr, ttest_ind)
 2. **Statsmodels** - Little's MCAR test, decomposição STL
 3. **Plotly** - Visualizações interativas com intervalos de confiança
