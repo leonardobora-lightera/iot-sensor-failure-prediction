@@ -2,6 +2,9 @@
 data/*.csv
 *.csv
 
+# EXCEPT: Allow specific transformed payloads for batch upload
+!payloads_processed/*.csv
+
 # Model files (large binaries)
 models/*.pkl
 *.pkl
@@ -32,3 +35,18 @@ Thumbs.db
 # Environment variables
 .env
 .env.local
+
+# Test coverage
+.coverage
+htmlcov/
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+
+# AWS payload raw files (large, keep only transformed)
+payloads_aws/*.csv
