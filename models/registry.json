@@ -1,14 +1,46 @@
 {
-  "registry_version": "1.0.0",
+  "registry_version": "2.0.0",
   "models": [
     {
+      "model_id": "catboost_v2_field_only",
+      "model_name": "CatBoost IoT Sensor Failure Predictor v2 (FIELD-only)",
+      "version": "2.0.0",
+      "deployed_date": "2025-11-13",
+      "model_path": "models/catboost_pipeline_v2_field_only.pkl",
+      "metadata_path": "models/catboost_pipeline_v2_metadata.json",
+      "status": "active",
+      "performance_metrics": {
+        "test_set_recall": 0.571,
+        "test_set_precision": 0.571,
+        "test_set_f1": 0.571,
+        "test_set_auc": 0.9186,
+        "critical_devices_detected": "8/14 (57.1%)",
+        "false_positives": 6,
+        "false_negatives": 6,
+        "test_samples": 229,
+        "critical_test_samples": 14
+      },
+      "training_info": {
+        "training_date": "2025-11-13",
+        "training_samples": 533,
+        "critical_samples": 32,
+        "features_count": 30,
+        "algorithm": "CatBoostClassifier",
+        "preprocessing": "SimpleImputer(median) + SMOTE(0.5)",
+        "dataset": "762 devices FIELD-only (removed 27 FACTORY devices)"
+      },
+      "notes": "Model v2 trained on pure production data after Discovery 0 (FACTORY contamination removal). AUC improved +6.6% vs v1 (0.8621 → 0.9186). Trade-off: -21.5% recall but gained data purity. Validated Nov 14, 2025 with 3 independent experiments."
+    },
+    {
       "model_id": "catboost_v1",
-      "model_name": "CatBoost IoT Sensor Failure Predictor",
+      "model_name": "CatBoost IoT Sensor Failure Predictor v1 (DEPRECATED)",
       "version": "1.0.0",
       "deployed_date": "2025-11-07",
       "model_path": "models/catboost_pipeline_v1_20251107.pkl",
       "metadata_path": "models/catboost_pipeline_v1_20251107_metadata.json",
-      "status": "active",
+      "status": "deprecated",
+      "deprecated_date": "2025-11-13",
+      "deprecated_reason": "Discovery 0: Dataset contaminated with 362,343 FACTORY messages (31.8%). Replaced by v2 FIELD-only.",
       "performance_metrics": {
         "test_set_recall": 0.7857,
         "test_set_precision": 0.8462,
@@ -26,8 +58,8 @@
         "algorithm": "CatBoostClassifier",
         "preprocessing": "SimpleImputer(median) + SMOTE(0.5)"
       },
-      "notes": "Production model selected after comprehensive optimization (Notebook 07). Outperformed XGBoost (+7.2% recall, +13.2% precision) and LightGBM. POC validated 2025-11-11 via scripts/reproduce_results.py."
+      "notes": "DEPRECATED - Metrics inflated by FACTORY data contamination. Files archived for historical reference."
     }
   ],
-  "notes": "POC MINIMAL REGISTRY: Tracks current production model only. For production: Add rollback strategy, previous versions history, A/B testing results, drift monitoring integration."
+  "notes": "Model Registry v2: Tracks production model (v2) and deprecated models for historical reference. v1 deprecated Nov 13, 2025 due to data contamination (Discovery 0)."
 }

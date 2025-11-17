@@ -121,20 +121,28 @@ def load_aws_payload(filepath: str) -> pd.DataFrame:
     
     # ⭐ NOVO: Filtrar apenas MODE='FIELD' (production-only)
     # Remove FACTORY (lab testing) entries para evitar lifecycle mixing
-    if 'mode' in df.columns:
+    # Procura por várias nomenclaturas possíveis de MODE
+    mode_col = None
+    for col in ['decoded_payload.mode', 'eyon_metadata.decoded_payload.mode', 'mode']:
+        if col in df.columns:
+            mode_col = col
+            logger.info(f"🔍 MODE column found: {col}")
+            break
+    
+    if mode_col:
         initial_count = len(df)
-        df = df[df['mode'] == 'FIELD'].copy()
+        df = df[df[mode_col] == 'FIELD'].copy()
         factory_removed = initial_count - len(df)
         factory_pct = (factory_removed / initial_count * 100) if initial_count > 0 else 0
         
         logger.info(f"🔧 MODE Filter Applied:")
-        logger.info(f"   - Removed {factory_removed:,} FACTORY entries ({factory_pct:.1f}%)")
+        logger.info(f"   - Removed {factory_removed:,} FACTORY+NaN entries ({factory_pct:.1f}%)")
         logger.info(f"   - Remaining: {len(df):,} FIELD messages ({100-factory_pct:.1f}%)")
         
         if factory_removed == 0:
             logger.warning("⚠️  No FACTORY entries found - all messages already FIELD")
     else:
-        logger.warning("⚠️  'mode' column not found - skipping MODE filter")
+        logger.warning("⚠️  MODE column not found - skipping MODE filter")
         logger.warning("     Consider adding MODE column to distinguish FACTORY vs FIELD")
     
     return df

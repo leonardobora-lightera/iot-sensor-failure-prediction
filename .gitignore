@@ -16,6 +16,12 @@ __pycache__/
 *.so
 .Python
 
+# Pytest cache
+.pytest_cache/
+
+# CatBoost training logs (auto-generated)
+catboost_info/
+
 # Virtual environments
 venv/
 env/

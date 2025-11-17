@@ -1,112 +1,233 @@
-# 📊 IoT Critical Device Prediction - Notebooks
+# 📊 IoT Critical Device Prediction - Notebooks# 📊 IoT Critical Device Prediction - Notebooks
 
-## 🎯 Objetivo
-Prever dispositivos IoT críticos (falhas de comunicação) baseado em padrões de telemetria, status e anomalias.
 
----
 
-## 📁 Estrutura de Notebooks Ativos
+## 🎯 Objetivo## 🎯 Objetivo
 
-### **02B_stratified_split_by_device.ipynb** 
-**Função:** Geração de Dados com Split Estratificado  
-**Status:** ✅ ESSENCIAL - Executado e validado  
+Prever dispositivos IoT críticos (falhas de comunicação) baseado em padrões de telemetria, status e anomalias.Prever dispositivos IoT críticos (falhas de comunicação) baseado em padrões de telemetria, status e anomalias.
 
-**O que faz:**
-- Carrega `device_features_with_telemetry.csv` (789 devices, 45 critical)
-- Aplica stratified split por `device_id` preservando proporção de `is_critical_target`
-- Gera 2 CSVs sem overlap:
-  - `device_features_train_stratified.csv`: 552 devices (31 critical, 5.6%)
-  - `device_features_test_stratified.csv`: 237 devices (14 critical, 5.9%)
 
-**Validações:**
-- ✅ Zero overlap entre train/test
-- ✅ Proporções balanceadas (0.29% diff)
-- ✅ Total de 789 devices preservado
 
-**Por que Estratificado?**  
-Split temporal original tinha **DATA LEAKAGE** (650 devices apareciam em train E test). Split estratificado por device garante:
-1. **Zero overlap** (cada device em apenas 1 conjunto)
-2. **Generalização válida** (sem distribution shift)
-3. **Métricas confiáveis** (test set independente)
+------
 
----
 
-### **03_status_modelagem_pratica.ipynb**
-**Função:** Baseline com Dropna  
-**Status:** ✅ REFERÊNCIA - Baseline funcional mas limitado  
 
-**O que faz:**
-- Carrega CSVs estratificados
-- Aplica `dropna()` para remover missing values
-- Treina RandomForest com `class_weight='balanced'`
+## ⚠️ TRANSIÇÃO PARA MODELO V2 (13/Nov/2025)## ⚠️ TRANSIÇÃO PARA MODELO V2 (13/Nov/2025)
 
-**Resultados (Test Set):**
-```
-Recall:    85.71% (6 de 7 critical detectados)
-Precision: 100.00% (zero falsos positivos)
-F1-Score:  92.31%
-```
 
-**Limitação:**
-- `dropna()` reduz amostras críticas:
+
+Este projeto passou por uma **refatoração importante** para eliminar contaminação de dados FACTORY (lab testing):Este projeto passou por uma **refatoração importante** para eliminar contaminação de dados FACTORY (lab testing):
+
+
+
+### 📌 Modelo v1 (ARQUIVADO)### 📌 Modelo v1 (ARQUIVADO)
+
+- **Dataset:** Mixed FACTORY+FIELD (789 devices)- **Dataset:** Mixed FACTORY+FIELD (789 devices)
+
+- **Performance:** Recall 78.6%, Precision 84.6%, AUC 0.8621- **Performance:** Recall 78.6%, Precision 84.6%, AUC 0.8621
+
+- **Problema:** Lifecycle mixing (lab + production data juntos)- **Problema:** Lifecycle mixing (lab + production data juntos)
+
+- **Notebooks:** Movidos para `archive_v1/` (preservados para referência)- **Notebooks:** Movidos para `archive_v1/` (preservados para referência)
+
+
+
+### ✅ Modelo v2 (ATUAL)### ✅ Modelo v2 (ATUAL)
+
+- **Dataset:** FIELD-only (762 devices, 30 features)- **Dataset:** FIELD-only (762 devices, 30 features)
+
+- **Filtro:** `MODE='FIELD'` - removidos 362k mensagens FACTORY (31.8%)- **Filtro:** `MODE='FIELD'` - removidos 362k mensagens FACTORY (31.8%)
+
+- **Nova feature:** `days_since_last_message` (detecta devices inativos)- **Nova feature:** `days_since_last_message` (detecta devices inativos)
+
+- **Performance:** Recall 57.1%, Precision 57.1%, **AUC 0.9186** (+6.6%)- **Performance:** Recall 57.1%, Precision 57.1%, **AUC 0.9186** (+6.6%)
+
+- **Trade-off:** -21.5% recall, mas **fundação limpa** para melhorias futuras- **Trade-off:** -21.5% recall, mas **fundação limpa** para melhorias futuras
+
+- **Filosofia:** "2 passos atrás, 3 pra frente"- **Filosofia:** "2 passos atrás, 3 pra frente"
+
+
+
+### 🚀 Próximos Passos (Roadmap v2)### 🚀 Próximos Passos (Roadmap v2)
+
+1. **Hyperparameter Tuning:** GridSearch CatBoost (esperado +10-15% recall)1. **Hyperparameter Tuning:** GridSearch CatBoost (esperado +10-15% recall)
+
+2. **Feature Engineering Temporal:** Adicionar 4 features (FASE 3, 2 semanas)2. **Feature Engineering Temporal:** Adicionar 4 features (FASE 3, 2 semanas)
+
+3. **Threshold Calibration:** Otimizar decision boundary3. **Threshold Calibration:** Otimizar decision boundary
+
+
+
+------
+
+
+
+## 📁 Estrutura Atual## 📁 Estrutura de Notebooks v2
+
+
+
+### Notebooks Ativos (v2)**NOTA:** Notebooks v1 (02B-08) foram movidos para `archive_v1/` para preservar histórico.
+
+**NOTA:** Novos notebooks v2 serão criados sob demanda:
+
+- `09_model_v2_field_only.ipynb` - Treinamento e análise modelo v2 (planejado)Novos notebooks v2 serão criados sob demanda:
+
+- `10_temporal_features.ipynb` - Implementação features FASE 3 (planejado)- `09_model_v2_field_only.ipynb` - Treinamento e análise modelo v2
+
+- `11_hyperparameter_tuning.ipynb` - Otimização GridSearch (planejado)- `10_temporal_features.ipynb` - Implementação features FASE 3
+
+- `11_hyperparameter_tuning.ipynb` - Otimização GridSearch
+
+### Notebooks Arquivados (v1)
+
+Ver `archive_v1/` para notebooks do modelo v1 (mixed FACTORY+FIELD data):---
+
+
+
+- **02B_stratified_split_by_device.ipynb** - Split estratificado 70/30 (789 devices)## 📚 Notebooks Arquivados (v1)
+
+- **02_correlacao_telemetrias_msg6.ipynb** - Análise correlações telemetrias
+
+- **03_status_modelagem_pratica.ipynb** - Baseline com Dropna## 📚 Notebooks Arquivados (v1)
+
+- **04B_sem_leakage_LIMPO.ipynb** - Baseline com Imputation (29 features)
+
+- **04_correcao_class_imbalance.ipynb** - Correção class imbalanceVer `archive_v1/` para notebooks do modelo v1 (mixed FACTORY+FIELD data):
+
+- **05_smote_optimization.ipynb** - Otimização SMOTE 0.5
+
+- **06B_synthetic_validation_empirical.ipynb** - Validação dados sintéticos### **02B_stratified_split_by_device.ipynb** ⚠️ v1
+
+- **06_synthetic_data_validation.ipynb** - Validação dados sintéticos**Função:** Geração de Dados com Split Estratificado (789 devices)  
+
+- **07_model_optimization.ipynb** - Comparação XGBoost/LightGBM/CatBoost**Status:** ARQUIVADO - Dataset sem filtro MODE
+
+- **08_pipeline_producao.ipynb** - Pipeline v1 final (DEPRECATED - contaminated with FACTORY data)
+
+### **03_status_modelagem_pratica.ipynb** ⚠️ v1
+
+---**Função:** Baseline com Dropna  
+
+**Status:** ARQUIVADO - Baseline funcional mas limitado
+
+## 🔧 Pipeline de Treinamento v2- `dropna()` reduz amostras críticas:
+
   - Train: 31 → **13 critical** (perda de 58%)
-  - Test: 14 → **7 critical** (perda de 50%)
-- Métricas baseadas em **apenas 7 samples** (baixa confiança estatística)
 
-**Valor:**
-- Prova de conceito: Split estratificado funciona (0% recall no temporal → 85.71%)
-- Baseline simples para comparação
+```  - Test: 14 → **7 critical** (perda de 50%)
 
----
+payloads_lora_final.csv (2.04 GB, 1,138,275 messages)- Métricas baseadas em **apenas 7 samples** (baixa confiança estatística)
 
-### **04B_sem_leakage_LIMPO.ipynb** 🌟
-**Função:** Baseline REAL com Imputation (SEM Data Leakage)  
-**Status:** ✅ ATIVO - Baseline válido para produção  
+                    ↓
 
-**O que faz:**
-- Carrega CSVs estratificados
-- **Identifica e REMOVE features com data leakage** (`msg6_count`, `msg6_rate`)
-- Aplica `SimpleImputer(strategy='median')` preservando **TODOS** os 31 train + 14 test critical
-- Treina RandomForest com `class_weight='balanced'` em **29 features limpas**
-- Executa **4 validações rigorosas** confirmando leakage removido
+     [MODE='FIELD' Filter] → Remove 362k FACTORY (31.8%)**Valor:**
 
-**Resultados REAIS (Test Set):**
-```
+                    ↓- Prova de conceito: Split estratificado funciona (0% recall no temporal → 85.71%)
+
+     [Aggregate by Device] → 30 features (29 + days_since_last_message)- Baseline simples para comparação
+
+                    ↓
+
+device_features_with_telemetry_field_only.csv (762 devices, 46 critical)---
+
+                    ↓
+
+     [Stratified Split 70/30]### **04B_sem_leakage_LIMPO.ipynb** 🌟
+
+                    ↓**Função:** Baseline REAL com Imputation (SEM Data Leakage)  
+
+         ┌──────────┴──────────┐**Status:** ✅ ATIVO - Baseline válido para produção  
+
+         ↓                     ↓
+
+    TRAIN (533)            TEST (229)**O que faz:**
+
+   32 critical           14 critical- Carrega CSVs estratificados
+
+         ↓                     ↓- **Identifica e REMOVE features com data leakage** (`msg6_count`, `msg6_rate`)
+
+     [SimpleImputer → SMOTE 0.5 → CatBoost]- Aplica `SimpleImputer(strategy='median')` preservando **TODOS** os 31 train + 14 test critical
+
+         ↓- Treina RandomForest com `class_weight='balanced'` em **29 features limpas**
+
+    Recall: 57.1% (8/14)- Executa **4 validações rigorosas** confirmando leakage removido
+
+    Precision: 57.1%
+
+    AUC: 0.9186**Resultados REAIS (Test Set):**
+
+``````
+
 Recall:            50.00% (7 de 14 critical detectados)
-Precision:         87.50% (1 falso positivo)
+
+---Precision:         87.50% (1 falso positivo)
+
 F1-Score:          63.64%
-Balanced Accuracy: 74.78%
+
+## 📝 ReferênciasBalanced Accuracy: 74.78%
+
 ROC-AUC:           0.9065
-```
 
-**Por que as métricas "caíram"?**
+- **Código Treinamento v2:** `train_model_v2.py` (script Python standalone)```
 
-| Métrica | NB03 (dropna) | NB04B (REAL) | Análise |
-|---------|---------------|--------------|---------|
+- **Processamento Payloads:** `process_payloads_chunks.py` + `scripts/transform_aws_payload.py`
+
+- **Modelo v2:** `models/catboost_pipeline_v2_field_only.pkl` (127.9 KB)**Por que as métricas "caíram"?**
+
+- **Metadata v2:** `models/catboost_pipeline_v2_metadata.json`
+
+- **Plano de Ação:** `docs/PLANO_ACAO_FIX_FALSOS_POSITIVOS.md`| Métrica | NB03 (dropna) | NB04B (REAL) | Análise |
+
+- **Feature Engineering:** `docs/FEATURE_ENGINEERING_TEMPORAL.md` (roadmap FASE 3)|---------|---------------|--------------|---------|
+
 | Recall | 85.71% | **50.00%** | 6/7 vs 7/14 samples - mais confiável |
-| Precision | 100.00% | **87.50%** | Artificial vs realista |
+
+---| Precision | 100.00% | **87.50%** | Artificial vs realista |
+
 | Samples | 7 critical | **14 critical** | 2x mais dados |
 
+## 🎓 Lições Aprendidas
+
 **Descoberta Crítica:**
-- Notebook inicial (04_OLD) tinha **precision 100%, AUC 0.9994** → "Bom demais para ser verdade?"
-- Validação revelou **DATA LEAKAGE**: Features `msg6_rate` (42.1% importance) e `msg6_count` (5.8%) estavam vazando a **definição do target**
-- Target: `is_critical_target = (msg6_count > IQR_threshold)`
-- Modelo aprendia: "Se msg6_rate > X → Critical" (circular, inútil)
 
-**Correção:**
-- Removidas **2 features contaminadas**: `msg6_count`, `msg6_rate`
-- Preservadas **29 features legítimas**: telemetria (optical, temp, battery, SNR, RSRP), status, agregações
-- Modelo agora aprende padrões REAIS: anomalias de telemetria + volume de mensagens + conectividade
+### Por que v2 tem recall menor?- Notebook inicial (04_OLD) tinha **precision 100%, AUC 0.9994** → "Bom demais para ser verdade?"
 
-**Validações (4/4 Aprovadas):**
-1. ✅ Zero features `msg6_*` ou `msg_type_6_*`
-2. ✅ AUC 0.9065 < 0.98 (threshold sklearn para leakage)
-3. ✅ Top feature `max_frame_count` 29.5% < 40% (distribuído, não dominante)
-4. ✅ Precision 87.5% < 100% (erros normais, não artificial)
+1. **Dataset menor:** 789 → 762 devices (-3.4%)- Validação revelou **DATA LEAKAGE**: Features `msg6_rate` (42.1% importance) e `msg6_count` (5.8%) estavam vazando a **definição do target**
 
-**Features Importantes (Top 5):**
+2. **Menos "informative noise":** FACTORY tinha padrões de degradação (mesmo sendo lab)- Target: `is_critical_target = (msg6_count > IQR_threshold)`
+
+3. **Pipeline mais rigoroso:** Production-only elimina lifecycle mixing- Modelo aprendia: "Se msg6_rate > X → Critical" (circular, inútil)
+
+
+
+### Por que AUC melhorou?**Correção:**
+
+- **0.8621 → 0.9186 (+6.6%)** indica melhor **ranking/calibração**- Removidas **2 features contaminadas**: `msg6_count`, `msg6_rate`
+
+- Modelo sabe ORDENAR probabilidades melhor (mesmo errando threshold)- Preservadas **29 features legítimas**: telemetria (optical, temp, battery, SNR, RSRP), status, agregações
+
+- Fundação sólida para hyperparameter tuning- Modelo agora aprende padrões REAIS: anomalias de telemetria + volume de mensagens + conectividade
+
+
+
+### Trade-off validado**Validações (4/4 Aprovadas):**
+
+- ✅ "2 passos atrás, 3 pra frente"1. ✅ Zero features `msg6_*` ou `msg_type_6_*`
+
+- ✅ Recall recuperável com GridSearch + features temporais2. ✅ AUC 0.9065 < 0.98 (threshold sklearn para leakage)
+
+- ✅ Dados limpos > dados contaminados3. ✅ Top feature `max_frame_count` 29.5% < 40% (distribuído, não dominante)
+
+- ✅ AUC alto = confiança em probabilidades4. ✅ Precision 87.5% < 100% (erros normais, não artificial)
+
+
+
+---**Features Importantes (Top 5):**
+
 1. `max_frame_count` (29.5%): Picos anormais de frames
-2. `total_messages` (16.5%): Volume de comunicações
+
+**Última atualização:** 13/Nov/2025 - Leonardo Costa2. `total_messages` (16.5%): Volume de comunicações
+
 3. `optical_readings` (15.6%): Leituras ópticas totais
 4. `temp_mean` (5.7%): Temperatura média
 5. `rsrp_mean` (2.3%): Sinal de conectividade

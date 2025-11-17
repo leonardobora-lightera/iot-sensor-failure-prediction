@@ -7,7 +7,7 @@ Uso:
     from inference import load_model, predict_device, predict_batch, log_prediction
 
     # Carregar modelo
-    pipeline = load_model('models/catboost_pipeline_v1_20251107.pkl')
+    pipeline = load_model('models/catboost_pipeline_v2_field_only.pkl')
 
     # Single prediction
     result = predict_device(features_dict, pipeline)
@@ -26,7 +26,7 @@ from datetime import datetime
 from pathlib import Path
 
 
-def log_prediction(device_id, prediction, probability, model_version="v1.0.0"):
+def log_prediction(device_id, prediction, probability, model_version="v2.0.0"):
     """
     POC EXEMPLO - Logging básico de predições para audit trail.
     

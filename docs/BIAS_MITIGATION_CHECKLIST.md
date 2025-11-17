@@ -25,7 +25,7 @@
 
 **O que é:** Informação do futuro ou do teste influencia o treinamento, inflando artificialmente a performance.
 
-#### Checklist de Mitigação:
+#### Checklist de Mitigação
 
 - [x] **Split ANTES de qualquer processamento**
   - ✅ Implementado: train-test split 70/30 temporal ANTES de agregações
@@ -53,7 +53,7 @@
 
 **O que é:** Dataset não representa a população real - favorece certos tipos de devices.
 
-#### Checklist de Mitigação:
+#### Checklist de Mitigação
 
 - [x] **Verificar composição do dataset**
   - ✅ Análise realizada: 789 devices, 676 com msg6 (85.7%)
@@ -79,7 +79,7 @@
 
 **O que é:** Erros sistemáticos na coleta de telemetrias que distorcem dados.
 
-#### Checklist de Mitigação:
+#### Checklist de Mitigação
 
 - [x] **Missing values analysis**
   - ✅ Implementado: Análise de % faltante por telemetria
@@ -106,7 +106,7 @@
 
 **O que é:** Target variable incorreto ou ambíguo contamina aprendizado.
 
-#### Checklist de Mitigação:
+#### Checklist de Mitigação
 
 - [x] **Definição clara de "falha"**
   - ✅ Definido: `is_critical_target = msg6_rate > 25%`
@@ -131,7 +131,7 @@
 
 **O que é:** Usar dados futuros para prever o passado, ou misturar ordem temporal.
 
-#### Checklist de Mitigação:
+#### Checklist de Mitigação
 
 - [x] **Train-test split temporal**
   - ✅ Implementado: 70% primeiros dias → treino, 30% últimos dias → teste
@@ -169,7 +169,7 @@ cv_scores = cross_val_score(rf, X_train, y_train, cv=tscv, scoring='recall')
 
 **O que é:** Relação entre features e target muda ao longo do tempo.
 
-#### Checklist de Mitigação:
+#### Checklist de Mitigação
 
 - [ ] **Análise de estabilidade temporal**
   - ⏳ **TODO**: Calcular correlação msg6 × features por mês (jan-out 2025)
@@ -193,7 +193,7 @@ cv_scores = cross_val_score(rf, X_train, y_train, cv=tscv, scoring='recall')
 
 **O que é:** Usar features que não estariam disponíveis no momento da predição real.
 
-#### Checklist de Mitigação:
+#### Checklist de Mitigação
 
 - [x] **Validar disponibilidade de features**
   - ✅ Todas features (RSSI, battery, temp, optical) vêm de telemetria em tempo real
@@ -217,7 +217,7 @@ cv_scores = cross_val_score(rf, X_train, y_train, cv=tscv, scoring='recall')
 
 **O que é:** Dataset contém apenas devices que "sobreviveram" até coleta, excluindo os que falharam cedo.
 
-#### Checklist de Mitigação:
+#### Checklist de Mitigação
 
 - [x] **Verificar inclusão de devices falhados**
   - ✅ Dataset contém devices com msg6_rate > 50% (provavelmente falhados)
@@ -242,7 +242,7 @@ cv_scores = cross_val_score(rf, X_train, y_train, cv=tscv, scoring='recall')
 
 **O que é:** Classes minoritárias (devices críticos) sub-representadas causam viés para maioria.
 
-#### Checklist de Mitigação:
+#### Checklist de Mitigação
 
 - [x] **Análise de distribuição de classes**
   - ✅ TRAIN: 45 critical (7%) vs 631 non-critical (93%) = **1:14 imbalance**
@@ -278,7 +278,7 @@ X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
 
 **O que é:** Dataset sobre-representa certas regiões/operadoras, sub-representa outras.
 
-#### Checklist de Mitigação:
+#### Checklist de Mitigação
 
 - [ ] **Estratificação por região**
   - ⏳ **TODO**: Analisar distribuição de devices por estado (SP, RS, Paraná, Pernambuco)
@@ -302,7 +302,7 @@ X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
 
 **O que é:** Escolher features baseado em performance no teste, causando overfitting.
 
-#### Checklist de Mitigação:
+#### Checklist de Mitigação
 
 - [x] **Feature selection ANTES de split**
   - ❌ **INCORRETO ATUAL**: Feature importance calculado em TRAIN, mas não houve seleção prévia
@@ -332,7 +332,7 @@ selected_features = X_train.columns[rfe.support_]
 
 **O que é:** Modelo aprende padrões aleatórios específicos do treino que não generalizam.
 
-#### Checklist de Mitigação:
+#### Checklist de Mitigação
 
 - [x] **Cross-validation implementado**
   - ✅ Implementado: CV=5 para feature importance
@@ -368,7 +368,7 @@ train_sizes, train_scores, val_scores = learning_curve(
 
 **O que é:** Escolher modelo baseado em performance no teste, invalidando generalização.
 
-#### Checklist de Mitigação:
+#### Checklist de Mitigação
 
 - [x] **Baseline definido ANTES de testes**
   - ✅ Definido: Isolation Forest (recall 99.05% conforme requirements.txt)
@@ -403,7 +403,7 @@ nested_scores = cross_val_score(grid_search, X, y, cv=outer_cv, scoring='recall'
 
 **O que é:** SNR tem feature importance #1 (30.7%) mas correlação Spearman r≈0 (não significativa).
 
-#### Checklist de Mitigação:
+#### Checklist de Mitigação
 
 - [ ] **Investigar interações não-lineares**
   - ⏳ **TODO Notebook 03**: Gerar SHAP values para entender contribuição SNR
@@ -438,7 +438,7 @@ shap.summary_plot(shap_values[1], X_train, feature_names=feature_cols)
 
 **O que é:** Maximizar métrica que não reflete objetivo real do negócio.
 
-#### Checklist de Mitigação:
+#### Checklist de Mitigação
 
 - [x] **Definir métrica de negócio PRIMEIRO**
   - ✅ Definido: **RECALL >70%** (capturar falhas reais)
@@ -468,7 +468,7 @@ optimal_threshold = thresholds[np.where(recalls >= 0.7)[0][0]]
 
 **O que é:** Testar muitas hipóteses aumenta chance de encontrar correlação espúria (falso positivo).
 
-#### Checklist de Mitigação:
+#### Checklist de Mitigação
 
 - [x] **Bonferroni correction**
   - ⏳ **TODO**: Aplicar correção para múltiplas comparações
@@ -490,7 +490,7 @@ optimal_threshold = thresholds[np.where(recalls >= 0.7)[0][0]]
 
 **O que é:** Informação do teste vaza para treino através de decisões humanas.
 
-#### Checklist de Mitigação:
+#### Checklist de Mitigação
 
 - [x] **Blind analysis**
   - ✅ Implementado: Test set processado mas NÃO validado ainda
@@ -514,7 +514,7 @@ optimal_threshold = thresholds[np.where(recalls >= 0.7)[0][0]]
 
 **O que é:** Diferenças entre ambiente de treino e produção causam degradação.
 
-#### Checklist de Mitigação:
+#### Checklist de Mitigação
 
 - [ ] **Validar latência de telemetria**
   - ⏳ **TODO**: Confirmar se devices enviam dados em tempo real ou com delay
@@ -535,7 +535,7 @@ optimal_threshold = thresholds[np.where(recalls >= 0.7)[0][0]]
 
 **O que é:** Predições do modelo influenciam dados futuros, criando auto-reforço.
 
-#### Checklist de Mitigação:
+#### Checklist de Mitigação
 
 - [ ] **Monitorar distribuição de features**
   - ⏳ **FUTURO**: Alertar se RSRP distribution muda >20% em produção
@@ -558,7 +558,7 @@ optimal_threshold = thresholds[np.where(recalls >= 0.7)[0][0]]
 
 **O que é:** Analista busca evidências que confirmam hipótese inicial, ignorando contra-evidências.
 
-#### Checklist de Mitigação:
+#### Checklist de Mitigação
 
 - [x] **Pre-register hypotheses**
   - ✅ Implementado: Hipóteses documentadas no header do notebook ANTES de análise
@@ -580,7 +580,7 @@ optimal_threshold = thresholds[np.where(recalls >= 0.7)[0][0]]
 
 **O que é:** Continuar com abordagem ruim porque "já investimos muito tempo".
 
-#### Checklist de Mitigation:
+#### Checklist de Mitigation
 
 - [x] **Decision gates definidos**
   - ✅ Implementado: Gate #1 "Se recall <70% → PARAR" (Constitution Principle)
@@ -603,7 +603,7 @@ optimal_threshold = thresholds[np.where(recalls >= 0.7)[0][0]]
 
 **O que é:** Reportar apenas resultados positivos, esconder experimentos falhados.
 
-#### Checklist de Mitigação:
+#### Checklist de Mitigação
 
 - [x] **Documentar falhas**
   - ✅ Implementado: Notebook 02 documenta SNR contradição (não esconde)
@@ -639,17 +639,20 @@ optimal_threshold = thresholds[np.where(recalls >= 0.7)[0][0]]
 ### Resumo Executivo
 
 **✅ APROVADO (28 itens):**
+
 - Data leakage prevention implementado corretamente
 - Features causais (não retrospectivas)
 - Test set preservado como virgin data
 - Transparência e documentação de falhas
 
 **🔴 CRÍTICO (3 itens):**
+
 1. **TimeSeriesSplit NÃO usado** → KFold random invalida CV temporal
 2. **Class imbalance 1:14** → Recall 30% inaceitável (meta: 70%)
 3. **SNR contradição** → Feature importance #1 mas correlação zero
 
 **⚠️ ATENÇÃO (28 itens pendentes):**
+
 - 85.7% failure rate no dataset (suspeito de seleção)
 - 45% missing values em telemetrias (precisa investigação)
 - Nested CV para hyperparameters não implementado
@@ -662,6 +665,7 @@ optimal_threshold = thresholds[np.where(recalls >= 0.7)[0][0]]
 ### 🔴 URGENTE (Bloqueadores)
 
 1. **Substituir KFold por TimeSeriesSplit**
+
    ```python
    # ANTES (ERRADO)
    cv_scores = cross_val_score(rf, X_train, y_train, cv=5)
@@ -673,6 +677,7 @@ optimal_threshold = thresholds[np.where(recalls >= 0.7)[0][0]]
    ```
 
 2. **Aplicar SMOTE para class imbalance**
+
    ```python
    from imblearn.over_sampling import SMOTE
    smote = SMOTE(sampling_strategy=0.5, random_state=42)
@@ -680,6 +685,7 @@ optimal_threshold = thresholds[np.where(recalls >= 0.7)[0][0]]
    ```
 
 3. **Investigar SNR com SHAP values**
+
    ```python
    import shap
    explainer = shap.TreeExplainer(rf)

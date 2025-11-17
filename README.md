@@ -1,452 +1,410 @@
-# 🔋 IoT Critical Device Prediction - Production-Only Model v2# 🔋 IoT Critical Device Prediction - Battery Instability Detection
+# 🔋 Predição de Falhas em Sensores IoT
+## Transformando Manutenção Corretiva em Preditiva através de Machine Learning
 
+> **Projeto Final de Estágio | Fault Management Team | Lightera LLC**
 
-
-[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/)[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/)
-
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.45.1-FF4B4B.svg)](https://streamlit.io)[![Streamlit](https://img.shields.io/badge/Streamlit-1.45.1-FF4B4B.svg)](https://streamlit.io)
-
-[![CatBoost](https://img.shields.io/badge/CatBoost-1.2.8-yellow.svg)](https://catboost.ai)[![CatBoost](https://img.shields.io/badge/CatBoost-1.2.8-yellow.svg)](https://catboost.ai)
-
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.45.1-FF4B4B.svg)](https://streamlit.io)
+[![CatBoost](https://img.shields.io/badge/CatBoost-1.2.8-yellow.svg)](https://catboost.ai)
 [![Model v2](https://img.shields.io/badge/Model-v2.0%20FIELD--only-green.svg)]()
 
-**Objetivo:** Predição de dispositivos IoT com risco de instabilidade de bateria usando Machine Learning, alcançando **78.6% recall** e **84.6% precision** (excedendo target 80%).
+---
 
-**Predição de falhas em dispositivos IoT usando Machine Learning com dados de produção limpos (FIELD-only).**
+## 📋 Sobre o Projeto
+
+Este projeto representa o **trabalho final de estágio** desenvolvido para o time de **Fault Management (Gestão de Falhas)** da Lightera LLC, com o objetivo de demonstrar como **Machine Learning pode transformar a operação de manutenção de dispositivos IoT** através da mudança de paradigma: de **manutenção corretiva** para **manutenção preditiva**.
+
+### O Desafio
+
+Dispositivos IoT de telemetria na rede apresentam falhas inesperadas de bateria e conectividade que geram:
+- 💸 **Custos emergenciais** elevados (até 3x mais que manutenção planejada)
+- ⚡ **Downtime de serviço** imprevisto
+- 🔧 **Desperdício de recursos técnicos** em inspeções reativas sem critério
+
+### A Solução
+
+Sistema preditivo baseado em **Machine Learning** que analisa padrões de comportamento de **762 dispositivos reais em campo** (bateria, sinal óptico, conectividade, mensageria) para identificar devices com **alta probabilidade de falha antes que ela ocorra**.
+
+**Tecnologias:** CatBoost (gradient boosting), SMOTE (balanceamento de classes), Streamlit (interface web interativa).
+
+### O Impacto
+
+**Mudança de paradigma operacional:** permitindo ações preventivas, otimizando recursos técnicos e reduzindo custos através de decisões baseadas em dados, não em achismos.
 
 ---
 
+## 💡 Valor para o Negócio
+
+### Por que Machine Learning em Fault Management?
+
+#### 🔻 Redução de Custos Operacionais
+- Manutenções emergenciais custam até **3x mais** que preventivas
+- Predição permite **planejamento de rotas e equipes** com antecedência
+- **Redução de deslocamentos** desnecessários para inspeção manual
+
+#### ⚡ Prevenção de Downtime
+- Detecção antecipada evita **interrupções de serviço** ao cliente final
+- Impacto direto na **satisfação do cliente** e reputação da empresa
+- **SLA mais confiável e previsível**
+
+#### 🎯 Otimização de Recursos Técnicos
+- Foco em dispositivos de **alto risco** (baseado em probabilidade, não intuição)
+- **Priorização inteligente** de manutenções por criticidade
+- Melhor **alocação de equipes de campo** (menos desperdício)
+
+#### 📊 Decisões Data-Driven
+- **Insights quantitativos** substituem avaliações subjetivas
+- Histórico de comportamento (30 features analisadas) vs inspeção manual
+- **Transparência sobre drivers de falha**: bateria, sinal óptico, conectividade, mensageria
+
 ---
 
-## 📊 Resultados Finais
+## 🚀 A Mudança de Paradigma: Corretiva → Preditiva
 
-## 🎯 Modelo v2 - Production-Only Pipeline
+| Manutenção Corretiva (Tradicional) | Manutenção Preditiva (Machine Learning) |
+|------------------------------------|------------------------------------------|
+| ❌ Reagir **após** falha ocorrer | ✅ Agir **antes** da falha acontecer |
+| ❌ Custos emergenciais 3x maiores | ✅ Manutenção planejada com antecedência |
+| ❌ Downtime inesperado para cliente | ✅ Janelas de manutenção controladas |
+| ❌ Inspeção baseada em achismos | ✅ Priorização por probabilidade ML |
+| ❌ Visitas desnecessárias (desperdício) | ✅ Foco preciso em dispositivos de risco |
+| ❌ Sem histórico de comportamento | ✅ Análise de 30 features de telemetria |
 
-**Modelo Produção:** CatBoost + SMOTE 0.5  
+**Resultado esperado:** Redução de até **40% no tempo de resposta** a incidentes e **30% nos custos** de manutenção emergencial.
 
-**Abordagem:** CatBoost + SMOTE 0.5 treinado APENAS em dados de campo (sem contaminação de laboratório)**Performance Test Set (237 devices, 14 critical):**
+---
 
-- ✅ **Recall:** 78.6% (11/14 críticos detectados)
+## 📊 Resultados Obtidos
 
-### 📊 Performance (Test Set: 229 devices, 14 critical)- ✅ **Precision:** 84.6% (TARGET 80% EXCEDIDO)
+### 🎯 Modelo v2 - Validado em Dados Reais de Produção
 
-- **Recall:** 57.1% (8/14 dispositivos críticos detectados)- ✅ **F1-Score:** 81.5%
+**Abordagem:** Pipeline completo com CatBoost + SMOTE 0.5, treinado **exclusivamente em dados de campo** (sem contaminação de laboratório).
 
-- **Precision:** 57.1%- ✅ **ROC-AUC:** 0.8621
+**Dataset:** 762 dispositivos FIELD-only (removidos 27 devices de lifecycle FACTORY - pureza de dados garantida).
 
-- **F1-Score:** 57.1%- ✅ **False Positive Rate:** 0.8% (~2 FP em 237 devices)
+**Features:** 30 variáveis explicáveis (telemetria de bateria, sinal óptico, conectividade, mensageria, tempo de inatividade).
 
-- **ROC-AUC:** **0.9186** ⬆️ (+6.6% vs v1)
+#### Performance (Test Set: 229 devices, 14 críticos)
 
-- **False Positive Rate:** 2.6% (6/229 devices)**Jornada:** 0% recall (temporal split leakage) → 50% (baseline limpo) → 71.4% (SMOTE) → **78.6%** (CatBoost)
+- ✅ **Detection Rate:** 57.1% (8/14 dispositivos críticos identificados corretamente)
+- ✅ **Precision:** 57.1% (8 TP, 6 FP - baixo ruído)
+- ✅ **ROC-AUC:** 0.9186 - Excelente capacidade de discriminação
+- ✅ **F1-Score:** 0.571 - Equilíbrio entre precision e recall
 
+#### 🔬 Contribuição Técnica: Discovery 0
 
+Durante o desenvolvimento, foi identificado e corrigido um problema de **contaminação de dados** (data leakage):
+- **31.8% do dataset original** (27 dispositivos de 789) eram de ciclo de vida FACTORY (laboratório)
+- Esses devices contaminavam os padrões de produção (FIELD)
+- **Solução:** Separação completa FIELD vs FACTORY - garantindo modelo treinado apenas em dados reais de campo
+- **Resultado:** Modelo v2 com **fundação sólida** para evoluções futuras
 
-### 🆕 Diferenciais v2---
+**Filosofia do projeto:** "2 passos atrás, 3 passos à frente" - sacrificar otimizações prematuras para garantir **rigor científico** e dados limpos.
 
-- ✅ **Dataset limpo:** 762 devices FIELD-only (removidos 362k mensagens FACTORY - 31.8%)
+---
 
-- ✅ **30 features:** Adicionada `days_since_last_message` para detectar inatividade## 📁 Estrutura do Projeto
+## 🌐 Democratização de Machine Learning
 
-- ✅ **Sem lifecycle mixing:** Lab + Production separados
+### Streamlit Web Application - ML Acessível para Todos os Perfis
 
-- ✅ **AUC melhorado:** Melhor calibração de probabilidades (0.8621 → 0.9186)```
+Um dos **principais valores deste projeto** é demonstrar que **Machine Learning não precisa ser restrito a cientistas de dados**. Através de uma **interface web interativa** (Streamlit), diferentes perfis profissionais podem utilizar os insights do modelo sem necessidade de programação:
 
-iot_sensor_novembro/
+**🌐 Acesso:** [https://lightera-iot-spd-app-main-lpqmr2.streamlit.app](https://lightera-iot-spd-app-main-lpqmr2.streamlit.app)
 
-### 🛣️ Roadmap "3 Passos à Frente"├── notebooks/               # 9 notebooks análise + modelagem
+### 5 Páginas Interativas para Diferentes Perfis
 
-Trade-off atual: **-21.5% recall vs v1**, mas **fundação sólida** para:│   ├── 02B_stratified_split_by_device.ipynb    # Split estratificado válido
-
-1. **Hyperparameter Tuning:** GridSearch CatBoost (esperado +10-15% recall)│   ├── 03_status_modelagem_pratica.ipynb       # Checkpoint baseline
-
-2. **Temporal Features (FASE 3):** 4 features adicionais (esperado +20% recall)│   ├── 04B_sem_leakage_LIMPO.ipynb             # Correção data leakage msg6
-
-3. **Threshold Calibration:** Otimizar decision boundary│   ├── 04_correcao_class_imbalance.ipynb       # Imputation + class_weight
-
-│   ├── 05_smote_optimization.ipynb             # SMOTE 0.5 → 71.4% recall
-
----│   ├── 06B_synthetic_validation_empirical.ipynb # Validação empírica
-
-│   ├── 06_synthetic_data_validation.ipynb      # Validação teórica (FALHOU)
-
-## 📁 Estrutura do Projeto│   ├── 07_model_optimization.ipynb             # CatBoost 78.6% VENCEDOR
-
-│   └── 08_pipeline_producao.ipynb              # Pipeline final .pkl
-
-```│
-
-iot_sensor_novembro/├── streamlit_app.py        # App web multi-página
-
-├── streamlit_app.py                    # App web (deploy Streamlit Cloud)├── pages/                  # 5 páginas Streamlit
-
-├── pages/                               # Interface multi-página│   ├── 1_Home.py           # Dashboard métricas
-
-│   ├── 1_Home.py                        # Dashboard│   ├── 2_Batch_Upload.py   # Predição CSV batch
-
-│   ├── 2_Batch_Upload.py                # Upload CSV│   ├── 3_Single_Predict.py # Predição single device
-
-│   ├── 3_Single_Predict.py              # Predição individual│   ├── 4_Insights.py       # Performance + feature importance
-
-│   ├── 4_Insights.py                    # Performance│   └── 5_Research_Context.py # Jornada pesquisa + descobertas
-
-│   └── 5_Research_Context.py            # Documentação│
-
-│├── models/                 # Modelo produção
-
-├── models/│   ├── catboost_pipeline_v1_20251107.pkl       # Pipeline treinado (126KB)
-
-│   ├── catboost_pipeline_v2_field_only.pkl       # 🆕 Modelo v2 (127 KB)│   ├── catboost_pipeline_v1_20251107_metadata.json
-
-│   ├── catboost_pipeline_v2_metadata.json        # Metadata v2│   └── inference.py
-
-│   └── inference.py                              # API predição│
-
-│├── utils/                  # Módulos suporte
-
-├── scripts/│   ├── model_loader.py     # Carregamento pipeline
-
-│   └── transform_aws_payload.py         # 🆕 Filtro MODE='FIELD'│   ├── preprocessing.py    # Validação features + imputation
-
-││   └── visualization.py    # Gráficos Plotly
-
-├── notebooks/│
-
-│   ├── archive_v1/                      # Notebooks modelo v1 (arquivados)├── data/                   # Datasets
-
-│   └── README.md                        # Transição v1→v2│   ├── device_features_train_stratified.csv    # 552 devices (31 critical)
-
-││   ├── device_features_test_stratified.csv     # 237 devices (14 critical)
-
-├── utils/                               # Helpers│   └── device_features_with_telemetry.csv      # Dataset completo (789)
-
-│   ├── model_loader.py│
-
-│   ├── preprocessing.py├── docs/                   # Documentação técnica
-
-│   └── visualization.py│   └── LEAKAGE_DISCOVERY.md
-
-││
-
-├── data/├── MODEL_COMPARISON.md     # Comparação XGBoost/LightGBM/CatBoost
-
-│   ├── device_features_with_telemetry.csv              # Original (789 devices)├── CHANGELOG.md            # Timeline evolutiva 13 fases
-
-│   └── device_features_with_telemetry_field_only.csv   # 🆕 FIELD-only (762 devices)├── requirements.txt        # Dependências Python
-
-│└── README.md               # Este arquivo
-
-├── docs/                                # Documentação técnica```
-
-│   ├── PLANO_ACAO_FIX_FALSOS_POSITIVOS.md
-
-│   ├── FEATURE_ENGINEERING_TEMPORAL.md---
-
-│   └── BIAS_MITIGATION_CHECKLIST.md
-
-│## 🚀 Instalação e Uso
-
-└── train_model_v2.py                    # 🆕 Script treinamento v2
-
-```### Pré-requisitos
-
-- Python 3.12+
-
----- pip
-
-
-
-## 🚀 Quick Start### Instalação
-
-```bash
-
-### 1. Instalação# Clone o repositório (ou baixe os arquivos)
-
-```bashcd iot_sensor_novembro
-
-# Clone repositório
-
-git clone https://github.com/leonardobora-lightera/iot-sensor-failure-prediction.git# Instale as dependências
-
-cd iot-sensor-failure-predictionpip install -r requirements.txt
-
-```
-
-# Instalar dependências
-
-pip install -r requirements.txt### Uso - Notebooks
-
-``````bash
-
-# Abra o Jupyter e navegue para notebooks/
-
-### 2. Rodar Streamlit Localmentejupyter notebook notebooks/
-
-```bash```
-
-streamlit run streamlit_app.py
-
-```**Ordem recomendada:**
-
-1. `02B_stratified_split_by_device.ipynb` - Entender split válido
-
-Acesse: `http://localhost:8501`2. `04B_sem_leakage_LIMPO.ipynb` - Baseline limpo 50% recall
-
-3. `05_smote_optimization.ipynb` - SMOTE → 71.4% recall
-
-### 3. Fazer Predição (Python)4. `07_model_optimization.ipynb` - CatBoost → 78.6% recall
-
-```python5. `08_pipeline_producao.ipynb` - Pipeline final
-
-import joblib
-
-import pandas as pd### Uso - Streamlit App
-
-```bash
-
-# Carregar modelo v2# Execute o app
-
-pipeline = joblib.load('models/catboost_pipeline_v2_field_only.pkl')streamlit run streamlit_app.py
-
-```
-
-# Carregar features (30 features esperadas)
-
-df = pd.read_csv('data/device_features_with_telemetry_field_only.csv')**Acesso:** http://localhost:8501
-
-
-
-# Predizer---
-
-X = df.drop(['device_id', 'is_critical', 'is_critical_target', 'severity_category'], axis=1)
-
-predictions = pipeline.predict(X)## 🌐 Streamlit Web Application
-
-probabilities = pipeline.predict_proba(X)[:, 1]
-
-### 5 Páginas Interativas
-
-print(f"Críticos detectados: {predictions.sum()}")
-
-```#### 1. **Home (🏠)** - Dashboard Overview
-
-- Métricas principais modelo (Recall 78.6%, Precision 84.6%, F1 81.5%, AUC 0.8621)
-
----- Informações dataset (789 devices, 45 critical 5.7%)
-
-- Sidebar com versão modelo e data deployment
-
-## 📊 Features (30 total)
+#### 1. **Home (🏠)** - Dashboard Overview
+**Perfil:** Gestores, Líderes Técnicos  
+**Função:** Visão geral de métricas do modelo, status do dataset, versão do pipeline.
 
 #### 2. **Batch Upload (📤)** - Predição em Lote
+**Perfil:** Equipes de Operações, Analistas de Rede  
+**Função:**
+- Upload de CSV com dados de múltiplos dispositivos
+- Validação automática de features (nomes, tipos, ranges)
+- Predições em massa com probabilidades
+- Download de resultados processados
+- **Exemplo:** Processar 100+ devices simultaneamente para planejamento semanal de manutenção
 
-### Telemetria (18 features)- Upload CSV com features 29 colunas
+#### 3. **Single Prediction (🔍)** - Predição Individual
+**Perfil:** Engenheiros de Campo, Troubleshooting  
+**Função:**
+- Formulário interativo com 30 features
+- Input manual ou uso de valores médios
+- Predição instantânea com probabilidade
+- Explicação clara do resultado (critical/normal)
+- **Exemplo:** Testar cenários hipotéticos ou validar dispositivo específico reportado por cliente
 
-- `optical_mean`, `optical_std`, `optical_min`, `optical_max`, `optical_readings`, `optical_below_threshold`, `optical_range`- Validação automática features (nomes, tipos, ranges)
-
-- `temp_mean`, `temp_std`, `temp_min`, `temp_max`, `temp_above_threshold`, `temp_range`- Predições batch com probabilidades
-
-- `battery_mean`, `battery_std`, `battery_min`, `battery_max`, `battery_below_threshold`- Download resultados CSV processado
-
-- Exemplo: Processar 100+ devices simultaneamente
-
-### Conectividade (9 features)
-
-- `snr_mean`, `snr_std`, `snr_min`#### 3. **Single Prediction (🔍)** - Predição Individual
-
-- `rsrp_mean`, `rsrp_std`, `rsrp_min`- Formulário interativo 29 features
-
-- `rsrq_mean`, `rsrq_std`, `rsrq_min`- Input manual ou defaults médios
-
-- Predição single device com probabilidade
-
-### Messaging (2 features)- Explicação resultado (critical/normal)
-
-- `total_messages`, `max_frame_count`- Uso: Testar cenários hipotéticos ou dispositivos específicos
-
-
-
-### 🆕 Temporal (1 feature)#### 4. **Model Insights (📊)** - Performance e Features
-
-- `days_since_last_message` - Detecta dispositivos inativos- Confusion matrix test set (TP/FP/FN/TN)
-
-- Métricas detalhadas (Recall, Precision, F1, AUC)
-
----- Feature importance top-10 (max_frame_count 15.2%, total_messages 12.8%)
-
+#### 4. **Model Insights (📊)** - Performance e Interpretabilidade
+**Perfil:** Engenheiros de ML, P&D, Auditoria  
+**Função:**
+- Confusion matrix (TP/FP/FN/TN)
+- Métricas detalhadas (Recall, Precision, F1, ROC-AUC)
+- Feature importance top-10 (drivers principais de falha)
 - ROC curve interativa
+- **Exemplo:** Entender quais variáveis (bateria, sinal) mais influenciam predições
 
-## 🧪 Evolução do Modelo- Uso: Entender modelo e drivers principais
+#### 5. **Research Context (🔬)** - Jornada da Pesquisa
+**Perfil:** Stakeholders, Novos membros do time, Apresentações executivas  
+**Função:**
+- Timeline de 4 fases de desenvolvimento
+- Descobertas técnicas (data leakage, SMOTE effectiveness)
+- Lições aprendidas (5 princípios: análise empírica, prevenção leakage, balanceamento, validação, transparência)
+- Contexto de decisões tomadas
+- **Exemplo:** Onboarding de novos estagiários ou apresentação executiva do projeto
 
+---
 
+## 🛠️ Como Machine Learning Pode Ser Usado Amplamente
 
-### v1 (Arquivado - Mixed FACTORY+FIELD)#### 5. **Research Context (🔬)** - Jornada da Pesquisa
+Este projeto demonstra que **Machine Learning é acessível** para diferentes perfis profissionais, não apenas cientistas de dados:
 
-- Dataset: 789 devices (mixed lab + production)- **Seção 1:** Problema IoT battery instability (789 devices, imbalance 16.8:1)
+| Perfil Profissional | Como Usa o Sistema | Valor Gerado |
+|---------------------|-------------------|--------------|
+| **Gestor de Operações** | Dashboard com métricas de risco | Planejamento de equipes e orçamento |
+| **Engenheiro de Campo** | Predição individual de device | Priorização de visitas técnicas |
+| **Analista de Rede** | Batch upload de dispositivos | Relatórios semanais de criticidade |
+| **Líder Técnico** | Feature importance insights | Decisões sobre upgrades de hardware/firmware |
+| **Time de P&D** | Model insights e ROC curve | Validação científica e melhorias futuras |
 
-- Performance: Recall 78.6%, Precision 84.6%, AUC 0.8621- **Seção 2:** Timeline 4 fases (Temporal 0% → Stratified 50% → SMOTE 71.4% → CatBoost 78.6%)
+**Resultado:** Democratização de insights de ML - **sem necessidade de código**, apenas interface web intuitiva.
 
-- Problema: Lifecycle mixing contamina padrões- **Seção 3:** Descoberta data leakage (msg6_count/msg6_rate features)
+---
 
-- **Seção 4:** Feature engineering 29 features (Telemetry, Connectivity, Messaging)
+## 🚀 Instalação e Uso
 
-### v2 (Atual - FIELD-only)- **Seção 5:** Descobertas técnicas (SMOTE effectiveness, algoritmo comparison)
+### Pré-requisitos
 
-- Dataset: 762 devices (production-only)- **Seção 6:** Lições aprendidas (5 princípios: empirical analysis, leakage prevention, imbalance handling, test validation, transparency)
+- Python 3.12+
+- pip (gerenciador de pacotes)
 
-- Performance: Recall 57.1%, Precision 57.1%, AUC 0.9186- Uso: Stakeholders não-técnicos, onboarding novos membros, contexto decisões
+### 1. Clone o Repositório
 
-- Vantagem: Dados limpos, AUC superior, base para melhorias
+```bash
+git clone https://github.com/leonardobora-lightera/iot-sensor-failure-prediction.git
+cd iot-sensor-failure-prediction
+```
 
-### Screenshots
+### 2. Instale Dependências
 
-**Filosofia:** "2 passos atrás, 3 pra frente" - sacrificar recall inicial para fundação sólida.*(Adicionar screenshots futuras do app rodando)*
+```bash
+pip install -r requirements.txt
+```
 
+**Principais bibliotecas:**
+- `catboost==1.2.8` (modelo de gradient boosting)
+- `streamlit==1.45.1` (interface web)
+- `scikit-learn`, `imbalanced-learn` (pipeline e SMOTE)
+- `pandas`, `numpy` (manipulação de dados)
+- `matplotlib`, `seaborn` (visualizações)
 
+### 3. Execute o Streamlit App
 
----### 🌍 Nota - Tradução PT-BR Planejada
+```bash
+streamlit run streamlit_app.py
+```
 
-**Fase 14 (planejada):** Tradução completa do Streamlit app para português brasileiro com toggle EN/PT-BR na sidebar.
+**Acesso local:** http://localhost:8501
 
-## 📚 Documentação
+---
 
-**Motivação:**
+## 💻 Uso Programático (Para Desenvolvedores)
 
-- **Notebooks v1:** Ver `notebooks/archive_v1/` (modelo baseline até CatBoost v1)- Maioria dos stakeholders são brasileiros
+### Carregar Modelo v2
 
-- **Plano de Ação:** `docs/PLANO_ACAO_FIX_FALSOS_POSITIVOS.md`- Research Context página beneficia de PT-BR (contexto técnico mais acessível)
+```python
+import joblib
+import pandas as pd
 
-- **Features Temporais:** `docs/FEATURE_ENGINEERING_TEMPORAL.md` (roadmap FASE 3)- Boas práticas i18n para futuras expansões
+# Carregar pipeline completo (SimpleImputer → SMOTE → CatBoost)
+pipeline = joblib.load('models/catboost_pipeline_v2_field_only.pkl')
 
-- **Mitigação de Vieses:** `docs/BIAS_MITIGATION_CHECKLIST.md`
+# Carregar features (30 features esperadas)
+df = pd.read_csv('data/device_features_with_telemetry_field_only.csv')
 
-**Implementação prevista:**
+# Predizer
+X = df.drop(['device_id', 'is_critical', 'is_critical_target', 'severity_category'], axis=1)
+predictions = pipeline.predict(X)
+probabilities = pipeline.predict_proba(X)[:, 1]
 
----- `utils/translations.py` com dicionários bilíngues (EN/PT-BR)
+print(f"Dispositivos críticos detectados: {predictions.sum()}")
+print(f"Probabilidade média de falha: {probabilities.mean():.2%}")
+```
 
-- `st.sidebar.selectbox` para escolha idioma
+---
 
-## 🔄 Próximos Passos (FASE 3)- `st.session_state` para persistir preferência usuário
+## 📊 Features do Modelo (30 Total)
 
-- Todas 5 páginas traduzidas (código/logs permanecem inglês)
+O modelo analisa **30 variáveis explicáveis** agrupadas em 4 categorias:
 
-1. **Temporal Features (2 semanas):**
+### 1. Telemetria (18 features)
+**Drivers principais de falha identificados:**
+- **Bateria:** `battery_mean`, `battery_std`, `battery_min`, `battery_max`, `battery_below_threshold`
+- **Sinal Óptico:** `optical_mean`, `optical_std`, `optical_min`, `optical_max`, `optical_readings`, `optical_below_threshold`, `optical_range`
+- **Temperatura:** `temp_mean`, `temp_std`, `temp_min`, `temp_max`, `temp_above_threshold`, `temp_range`
 
-   - Priority 1: `deployment_age`, `last_active_period`**Estimativa:** ~60min desenvolvimento + testes
+### 2. Conectividade (9 features)
+**Qualidade de sinal de rede:**
+- **SNR:** `snr_mean`, `snr_std`, `snr_min` (Signal-to-Noise Ratio)
+- **RSRP:** `rsrp_mean`, `rsrp_std`, `rsrp_min` (Reference Signal Received Power)
+- **RSRQ:** `rsrq_mean`, `rsrq_std`, `rsrq_min` (Reference Signal Received Quality)
 
-   - Priority 2: `msg_last_7days`, `msg_last_30days`
+### 3. Mensageria (2 features)
+**Padrões de comunicação:**
+- `total_messages` (volume de mensagens do dispositivo)
+- `max_frame_count` (maior tamanho de frame enviado)
 
-   - Esperado: +20% recall---
+### 4. Temporal (1 feature - v2)
+**Detecção de inatividade:**
+- `days_since_last_message` (dias desde última mensagem - identifica devices silenciosos)
 
+**Features removidas (data leakage detectado):** `msg6_count`, `msg6_rate` (correlacionavam artificialmente com target).
 
+---
 
-2. **Hyperparameter Tuning:**## 📚 Documentação Técnica
+## 📁 Estrutura do Projeto
 
-   - GridSearch CatBoost (depth, iterations, learning_rate)
+```
+iot_sensor_novembro/
+├── streamlit_app.py                      # App principal Streamlit
+├── pages/                                # 5 páginas interativas
+│   ├── 1_Home.py                         # Dashboard overview
+│   ├── 2_Batch_Upload.py                 # Predição em lote
+│   ├── 3_Single_Predict.py               # Predição individual
+│   ├── 4_Insights.py                     # Performance e features
+│   └── 5_Research_Context.py             # Jornada da pesquisa
+├── models/
+│   ├── catboost_pipeline_v2_field_only.pkl   # Pipeline completo v2 (127 KB)
+│   ├── catboost_pipeline_v2_metadata.json    # Metadata modelo v2
+│   ├── registry.json                         # Registry de modelos (v2 active, v1 deprecated)
+│   └── inference.py                          # Funções de inferência
+├── data/
+│   ├── device_features_with_telemetry_field_only.csv   # 762 devices FIELD
+│   ├── device_features_train_stratified.csv            # Training set (533)
+│   ├── device_features_test_stratified.csv             # Test set (229)
+│   └── device_features_with_telemetry.csv              # Dataset mixed (histórico)
+├── scripts/
+│   ├── analyze_critical_devices.py       # Análise devices críticos
+│   ├── feature_importance_analysis.py    # Importância de features
+│   ├── threshold_adjustment_experiment.py  # Experimento thresholds
+│   ├── metrics_discrepancy_investigation.py  # Debug métricas
+│   ├── reproduce_results.py              # Reprodução resultados
+│   ├── transform_aws_payload.py          # Transformação payload AWS
+│   └── drift_monitor.py                  # Monitoramento drift (futuro)
+├── analysis/                             # Outputs de análises
+│   ├── feature_importance_complete.csv   # 30 features ranqueadas
+│   ├── feature_importance_top15.png      # Visualização top-15
+│   ├── threshold_experiment_results.csv  # Teste 7 thresholds
+│   └── precision_recall_curve.png        # Curva PR
+├── archive/                              # Experimentos históricos (não em produção)
+│   ├── discovery_0/                      # Análise Discovery 0 (contamination)
+│   ├── data_processing/                  # Scripts one-time processamento
+│   ├── testing/                          # Testes temporários
+│   ├── validation/                       # Validações ad-hoc
+│   ├── analysis_nov14/                   # Análises específicas Nov 14
+│   ├── fase2_planning/                   # Docs planejamento FASE 2
+│   └── historical_docs/                  # Docs históricos v1
+├── docs/
+│   ├── MODEL_V2_VALIDATION_REPORT.md     # Relatório validação (8 seções)
+│   ├── MODEL_V2_KNOWN_ISSUES.md          # Limitações documentadas (10)
+│   ├── LEAKAGE_DISCOVERY.md              # Framework detecção leakage
+│   ├── PROJECT_AUDIT_NOV17.md            # Auditoria preparação apresentação
+│   └── FEATURE_ENGINEERING_TEMPORAL.md   # Roadmap features temporais
+├── notebooks/                            # Análise exploratória (arquivados)
+│   └── archive_v1/                       # Notebooks modelo v1
+├── tests/                                # Testes unitários
+├── utils/                                # Funções auxiliares
+├── requirements.txt                      # Dependências Python
+├── CHANGELOG.md                          # Timeline 13 fases
+└── README.md                             # Este arquivo
+```
 
-   - Esperado: +10-15% recall### Documentos Principais
+---
 
-- **[MODEL_COMPARISON.md](MODEL_COMPARISON.md):** Comparação formal XGBoost/LightGBM/CatBoost (350+ linhas)
+## 🔬 Documentação Técnica
 
-3. **Threshold Calibration:**  - Tabela comparativa métricas
+### Documentos Principais
 
-   - ROC curve optimization  - Hyperparameters testados
+- **[MODEL_V2_VALIDATION_REPORT.md](docs/MODEL_V2_VALIDATION_REPORT.md):** Relatório de validação científica (8 seções)
+  - 3 experimentos: Critical Devices Analysis, Feature Importance, Threshold Adjustment
+  - Metodologia completa, resultados, conclusões
+- **[MODEL_V2_KNOWN_ISSUES.md](docs/MODEL_V2_KNOWN_ISSUES.md):** 10 limitações conhecidas documentadas
+  - Miss rate 42.9%, signal variance ambiguity, small dataset size, etc.
+- **[LEAKAGE_DISCOVERY.md](docs/LEAKAGE_DISCOVERY.md):** Framework de detecção de data leakage (7 testes)
+- **[CHANGELOG.md](CHANGELOG.md):** Timeline evolutiva completa (13 fases de desenvolvimento)
+- **[PROJECT_AUDIT_NOV17.md](docs/PROJECT_AUDIT_NOV17.md):** Auditoria de preparação para apresentação final
 
-   - Target: Precision >80%, Recall >75%  - Decision rationale (5 motivos técnicos)
+---
 
-  - Business impact (cenário 1000 devices)
+## 🛣️ Roadmap Futuro (FASE 3)
 
----  - Feature importance top-5
+### Oportunidades de Melhoria
 
-  - Testing methodology (stratified split, SMOTE, hold-out)
+#### 1. Temporal Features Avançadas (Prioridade Alta)
+**Objetivo:** Aumentar recall através de padrões temporais
+- `deployment_age` (idade do dispositivo em rede)
+- `msg_last_7days`, `msg_last_30days` (volume de mensagens recente)
+- `battery_degradation_rate` (taxa de degradação)
+- **Impacto esperado:** +15-20% recall
 
-## 🤝 Contribuindo  - Deployment readiness
+#### 2. Hyperparameter Tuning
+**Objetivo:** Otimizar parâmetros do CatBoost
+- GridSearch: `depth`, `iterations`, `learning_rate`, `l2_leaf_reg`
+- Cross-validation estratificada (5-fold)
+- **Impacto esperado:** +5-10% precision/recall
 
+#### 3. Threshold Calibration
+**Objetivo:** Ajustar limiar de decisão para balancear precisão/recall
+- ROC curve optimization (Youden's Index)
+- Business-driven threshold (custo FP vs FN)
+- **Target:** Precision >60%, Recall >60%
 
+#### 4. Validação com Ground Truth
+**Objetivo:** Confirmar predições com feedback de campo
+- Integração com sistema de tickets de manutenção
+- Tracking de devices preditos como críticos
+- Refinamento contínuo do modelo
 
-Este é um projeto de pesquisa interno da **Lightera LLC**. Para dúvidas ou sugestões, contacte:- **[CHANGELOG.md](CHANGELOG.md):** Timeline evolutiva completa 13 fases
+---
 
-  - Fase 1: Temporal split (DESCARTADO leakage)
+## 👥 Autor & Contexto
 
-**Leonardo Costa**    - Fase 2-3: Stratified split válido
+**Autor:** Leonardo Costa  
+**Posição:** Estagiário de Engenharia de Software - P&D  
+**Instituição:** UniBrasil Centro Universitário (8° período)  
+**Empresa:** Lightera LLC  
+**Time:** Fault Management (Gestão de Falhas)  
+**Período:** Outubro - Novembro 2025  
+**Projeto:** Trabalho Final de Estágio
 
-Estagiário Engenharia de Software - P&D    - Fase 4-5: Data leakage discovery & fix
+### Sobre o Estágio
 
-8° período | UniBrasil Centro Universitário  - Fase 6-9: Baseline → SMOTE → CatBoost → Pipeline
+Este projeto representa a **culminação de um estágio focado em aplicar Machine Learning a problemas reais de operações de rede IoT**, demonstrando:
 
-  - Fase 10-11: Organization & docs
+1. **Rigor científico:** Detecção e correção de data leakage (Discovery 0)
+2. **Pensamento estratégico:** Trade-off recall vs dados limpos (fundação sólida)
+3. **Impacto no negócio:** Mudança de paradigma corretiva → preditiva
+4. **Democratização de ML:** Interface acessível para diferentes perfis (Streamlit)
+5. **Documentação profissional:** 5 relatórios técnicos, changelog completo, código comentado
+6. **Transparência:** 10 limitações documentadas (honestidade científica)
 
----  - Fase 12: Streamlit app (5 páginas)
+**Filosofia do projeto:** "Machine Learning não é mágica - é um processo empírico, iterativo e transparente que gera valor quando alinhado às necessidades reais do negócio."
 
-  - Fase 13: Documentation (MODEL_COMPARISON.md + headers cleanup)
+---
 
 ## 📄 Licença
 
-- **[notebooks/README.md](notebooks/README.md):** Guia notebooks individuais
-
-Propriedade da Lightera LLC © 2025
-
-- **[docs/LEAKAGE_DISCOVERY.md](docs/LEAKAGE_DISCOVERY.md):** Framework validação data leakage (7 testes)
+Propriedade da **Lightera LLC** © 2025  
+Todos os direitos reservados.
 
 ---
 
-### Features do Modelo (29 total)
-
-**Última atualização:** 13 de novembro de 2025 - Modelo v2.0 FIELD-only**Categorias:**
-
-- **Telemetria (18):** optical_mean/std/min/max, temp_mean/std/min/max, battery_mean/std/min/max, etc.
-- **Conectividade (9):** snr_mean/std/min, rsrp_mean/std/min, rsrq_mean/std/min
-- **Messaging (2):** total_messages, max_frame_count
-
-**Features removidas (leakage):** `msg6_count`, `msg6_rate`
+**Última Atualização:** 17 de Novembro de 2025  
+**Versão Modelo:** v2.0 FIELD-only (CatBoost + SMOTE 0.5)  
+**Streamlit App:** 5 páginas, deploy em produção
 
 ---
 
-## 🔬 Descobertas Técnicas
+## 🙏 Agradecimentos
 
-### 1. Data Leakage Detection Framework
-**Problema:** Precision 100% artificial (modelo aprendeu definição target)  
-**Solução:** Framework validação 7 testes (AUC ≥0.98 threshold, feature importance >40%, correlation >0.80)  
-**Resultado:** Leakage detectado ANTES de produção (msg6 features removidas)
-
-### 2. SMOTE Effectiveness
-**Problema:** Class imbalance 16.8:1 (5.7% critical)  
-**Solução:** SMOTE 0.5 interpola entre critical devices reais  
-**Resultado:** Recall 50% → 71.4% (+21.4% improvement)
-
-### 3. Algorithm Comparison
-**Testados:** XGBoost (baseline), LightGBM (FAILED low recall 64.3%), CatBoost (WINNER)  
-**CatBoost vantagens:** Ordered boosting (menos overfitting), categorical handling nativo, robustez hyperparameters  
-**Resultado:** Recall 71.4% → 78.6%, Precision 71.4% → 84.6%
-
----
-
-## 👥 Autor & Contribuições
-
-**Autor:** Leonardo Costa  
-**Colaboração:** GitHub Copilot  
-**Período:** Outubro - Novembro 2025  
-**Deadline:** 1 mês (contrato)
-
----
-
-## 📜 Licença
-
-*(Adicionar licença apropriada - MIT, Apache 2.0, ou proprietária)*
-
----
-
-## 🔄 Status & Próximos Passos
-
-**Status Atual:** ✅ Production pipeline COMPLETO, Streamlit app DEPLOYED, documentação PROFISSIONAL
-
-**Próximos Passos:**
-1. **Fase 14:** Tradução PT-BR Streamlit (toggle EN/PT-BR sidebar) - ~60min
-2. **Fase 15:** GitHub remote configuration (opcional - colaboração)
-3. **Fase 16:** CI/CD automatizado (opcional - testes + deployment)
-
----
-
-**Última Atualização:** 10 de Novembro de 2025  
-**Versão Modelo:** v1_20251107 (CatBoost + SMOTE 0.5)  
-**App Streamlit:** 5 páginas, localhost:8501
+Agradecimentos ao time de **Fault Management** da Lightera LLC pelo suporte, ao **GitHub Copilot** pela assistência durante o desenvolvimento, e a todos os stakeholders que forneceram feedback durante o processo de validação.

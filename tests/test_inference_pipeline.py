@@ -24,7 +24,7 @@ class TestRealModelPipeline:
     def model_path(self):
         """Path to production model"""
         base_dir = Path(__file__).parent.parent
-        return base_dir / "models" / "catboost_pipeline_v1_20251107.pkl"
+        return base_dir / "models" / "catboost_pipeline_v2_field_only.pkl"
     
     @pytest.fixture(scope="class")
     def test_data_path(self):

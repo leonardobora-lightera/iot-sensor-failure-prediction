@@ -1,17 +1,22 @@
 """
-Reproducibility Validation Script - IoT Sensor Failure Prediction POC
+Reproducibility Validation Script - IoT Sensor Failure Prediction
 
-OBJETIVO: Validar que modelo CatBoost produz resultados DETERMINÍSTICOS e EXATOS
-         no test set, demonstrando rigor científico para apresentação POC.
+OBJETIVO: Validar que modelo CatBoost v2 produz resultados DETERMINÍSTICOS e EXATOS
+         no test set, demonstrando rigor científico.
 
-MÉTRICAS ESPERADAS (de test_inference_pipeline.py):
-- Recall: 78.57% ± 0.5%
-- Precision: 84.62% ± 0.5%
-- True Positives: 11/14 critical devices detected
-- F1-Score: 81.48%
-- AUC: 0.8621
+MODELO v2 - FIELD-only (Nov 13, 2025):
+- Dataset: 762 devices FIELD-only (sem contaminação FACTORY)
+- Features: 30 (29 telemetria + days_since_last_message)
+- Pipeline: SimpleImputer → SMOTE 0.5 → CatBoost
 
-CRITÉRIO SUCESSO POC: Se este script passar, POC está COMPLETA e pronta para apresentação.
+MÉTRICAS ESPERADAS v2 (baseline threshold 0.50):
+- Precision: 57.1% (8 TP, 6 FP)
+- Recall: 57.1% (8 TP, 6 FN)
+- F1-Score: 0.571
+- ROC-AUC: 0.9186
+- Test Set: 229 devices (14 critical)
+
+CRITÉRIO SUCESSO: Reproduzir métricas v2 com precisão decimal.
 """
 
 import pandas as pd
@@ -21,7 +26,7 @@ from sklearn.metrics import recall_score, precision_score, f1_score, roc_auc_sco
 
 # Paths
 PROJECT_ROOT = Path(__file__).parent.parent
-MODEL_PATH = PROJECT_ROOT / "models" / "catboost_pipeline_v1_20251107.pkl"
+MODEL_PATH = PROJECT_ROOT / "models" / "catboost_pipeline_v2_field_only.pkl"
 TEST_DATA_PATH = PROJECT_ROOT / "data" / "device_features_test_stratified.csv"
 
 def load_test_data():
