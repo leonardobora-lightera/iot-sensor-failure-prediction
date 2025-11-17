@@ -43,28 +43,28 @@ feature_importance_top5 = metadata.get('feature_importance_top5', [])
 hyperparameters = metadata.get('hyperparameters', {})
 
 # Section 1: Model Performance Overview
-st.subheader("📈 Model Performance Metrics")
+st.subheader(get_text('insights', 'performance_title', lang))
 
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     recall = performance.get('recall', 0.571)
-    st.metric("Recall", f"{recall:.1%}", help="8/14 critical devices detected (v2 FIELD-only)")
+    st.metric(get_text('insights', 'recall_label', lang), f"{recall:.1%}", help=get_text('insights', 'recall_help', lang))
 
 with col2:
     precision = performance.get('precision', 0.571)
-    st.metric("Precision", f"{precision:.1%}", help="57.1% of critical predictions correct")
+    st.metric(get_text('insights', 'precision_label', lang), f"{precision:.1%}", help=get_text('insights', 'precision_help', lang))
 
 with col3:
     f1 = performance.get('f1_score', 0.571)
-    st.metric("F1-Score", f"{f1:.1%}", help="Harmonic mean of precision and recall")
+    st.metric(get_text('insights', 'f1_label', lang), f"{f1:.1%}", help=get_text('insights', 'f1_help', lang))
 
 with col4:
     auc = performance.get('roc_auc', 0.9186)
-    st.metric("ROC-AUC", f"{auc:.4f}", help="Area under ROC curve (+6.6% vs v1)")
+    st.metric(get_text('insights', 'auc_label', lang), f"{auc:.4f}", help=get_text('insights', 'auc_help', lang))
 
 # Business Metrics
-st.markdown("### 💼 Business Impact Metrics")
+st.markdown(f"### {get_text('insights', 'business_title', lang)}")
 
 col1, col2, col3 = st.columns(3)
 
@@ -100,7 +100,7 @@ with col3:
 st.markdown("---")
 
 # Section 2: Confusion Matrix
-st.subheader("🔢 Confusion Matrix")
+st.subheader(get_text('insights', 'confusion_title', lang))
 
 col1, col2 = st.columns([1, 1])
 
@@ -138,7 +138,7 @@ with col2:
 st.markdown("---")
 
 # Section 3: Feature Importance
-st.subheader("🎯 Feature Importance Analysis")
+st.subheader(get_text('insights', 'feature_importance_title', lang))
 
 if feature_importance_top5:
     # Convert array to DataFrame

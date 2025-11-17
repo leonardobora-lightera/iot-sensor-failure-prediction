@@ -33,15 +33,19 @@ except Exception as e:
 
 # Form for feature input
 with st.form("prediction_form"):
-    st.subheader("📝 Device Features Input")
+    st.subheader(get_text('single', 'form_title', lang))
     
     # Group features by category
-    tab1, tab2, tab3 = st.tabs(["📡 Telemetry (18)", "📶 Connectivity (9)", "📨 Messaging (3)"])
+    tab1, tab2, tab3 = st.tabs([
+        get_text('single', 'tab_telemetry', lang), 
+        get_text('single', 'tab_connectivity', lang), 
+        get_text('single', 'tab_messaging', lang)
+    ])
     
     features = {}
     
     with tab1:
-        st.markdown("**Optical Sensor Readings**")
+        st.markdown(f"**{get_text('single', 'optical_title', lang)}**")
         col1, col2, col3 = st.columns(3)
         with col1:
             features['optical_mean'] = st.number_input("optical_mean", value=50.0, format="%.2f")
@@ -54,7 +58,7 @@ with st.form("prediction_form"):
         with col3:
             features['optical_range'] = st.number_input("optical_range", value=40.0, format="%.2f")
         
-        st.markdown("**Temperature Sensor Readings**")
+        st.markdown(f"**{get_text('single', 'temp_title', lang)}**")
         col1, col2, col3 = st.columns(3)
         with col1:
             features['temp_mean'] = st.number_input("temp_mean (°C)", value=25.0, format="%.2f", key="temp_mean")
@@ -66,7 +70,7 @@ with st.form("prediction_form"):
             features['temp_above_threshold'] = st.number_input("temp_above_threshold", value=2.0, format="%.1f")
             features['temp_range'] = st.number_input("temp_range", value=20.0, format="%.2f")
         
-        st.markdown("**Battery Sensor Readings**")
+        st.markdown(f"**{get_text('single', 'battery_title', lang)}**")
         col1, col2 = st.columns(2)
         with col1:
             features['battery_mean'] = st.number_input("battery_mean (V)", value=3.3, format="%.2f", key="bat_mean")
@@ -77,7 +81,7 @@ with st.form("prediction_form"):
             features['battery_below_threshold'] = st.number_input("battery_below_threshold", value=0.0, format="%.1f")
     
     with tab2:
-        st.markdown("**Signal-to-Noise Ratio (SNR)**")
+        st.markdown(f"**{get_text('single', 'snr_title', lang)}**")
         col1, col2, col3 = st.columns(3)
         with col1:
             features['snr_mean'] = st.number_input("snr_mean (dB)", value=10.0, format="%.2f", key="snr_mean")
@@ -86,7 +90,7 @@ with st.form("prediction_form"):
         with col3:
             features['snr_min'] = st.number_input("snr_min (dB)", value=5.0, format="%.2f", key="snr_min")
         
-        st.markdown("**Reference Signal Received Power (RSRP)**")
+        st.markdown(f"**{get_text('single', 'rsrp_title', lang)}**")
         col1, col2, col3 = st.columns(3)
         with col1:
             features['rsrp_mean'] = st.number_input("rsrp_mean (dBm)", value=-100.0, format="%.2f", key="rsrp_mean")
@@ -95,7 +99,7 @@ with st.form("prediction_form"):
         with col3:
             features['rsrp_min'] = st.number_input("rsrp_min (dBm)", value=-110.0, format="%.2f", key="rsrp_min")
         
-        st.markdown("**Reference Signal Received Quality (RSRQ)**")
+        st.markdown(f"**{get_text('single', 'rsrq_title', lang)}**")
         col1, col2, col3 = st.columns(3)
         with col1:
             features['rsrq_mean'] = st.number_input("rsrq_mean (dB)", value=-10.0, format="%.2f", key="rsrq_mean")
@@ -105,7 +109,7 @@ with st.form("prediction_form"):
             features['rsrq_min'] = st.number_input("rsrq_min (dB)", value=-15.0, format="%.2f", key="rsrq_min")
     
     with tab3:
-        st.markdown("**Communication Volume Metrics (Model v2)**")
+        st.markdown(f"**{get_text('single', 'messaging_title', lang)}**")
         col1, col2, col3 = st.columns(3)
         with col1:
             features['total_messages'] = st.number_input(
@@ -130,12 +134,12 @@ with st.form("prediction_form"):
             )
     
     # Submit button
-    submitted = st.form_submit_button("🚀 Predict Device Risk", type="primary")
+    submitted = st.form_submit_button(get_text('single', 'predict_button', lang), type="primary")
 
 # Process prediction
 if submitted:
     st.markdown("---")
-    st.subheader("📊 Prediction Results")
+    st.subheader(get_text('single', 'result_title', lang))
     
     # Create DataFrame from features
     features_df = pd.DataFrame([features])
