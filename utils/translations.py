@@ -258,14 +258,37 @@ TRANSLATIONS = {
         'research': {
             'title': '📖 Research Context & Methodology',
             'subtitle': 'Understanding the IoT Predictive Maintenance Problem',
+            'model_version_info': '📊 **Current Model:** v2.0 FIELD-only (November 13, 2025) | This page documents the complete research journey from v1 to v2',
             'problem_title': '🔧 The Business Problem',
-            'data_title': '📊 The Dataset',
-            'journey_title': '🔬 The Discovery Journey',
-            'leakage_title': '🚨 Critical Discovery: Data Leakage',
-            'solution_title': '✅ The Solution',
-            'results_title': '📈 Results & Impact',
-            'lessons_title': '💡 Key Lessons Learned',
-            'next_title': '🚀 Next Steps',
+            'problem_content': """**IoT Device Failures in Production Environments**
+
+Our organization deployed **789 IoT devices** for critical monitoring applications. 
+Over time, **45 devices (5.7%) exhibited critical failures** requiring emergency maintenance.
+
+**Challenges:**
+- 🚨 **Unplanned downtime** causes revenue loss and customer dissatisfaction
+- ⚙️ **Emergency repairs** cost 3-5x more than preventive maintenance
+- � **No early warning system** - failures discovered reactively
+- 🔍 **Manual inspection** of 789 devices infeasible (resource constraints)
+
+**Business Objective:**
+Build a machine learning model to **predict critical devices BEFORE failure** 
+enabling **preventive maintenance** and **resource optimization**.""",
+            'evolution_box_title': '**Model Evolution**',
+            'evolution_v1_title': '**v1 (Mixed Data):**',
+            'evolution_v1_devices': '789 devices (FACTORY+FIELD)',
+            'evolution_v1_perf': 'Recall 78.6%, Precision 84.6%',
+            'evolution_v1_auc': 'AUC 0.8621',
+            'evolution_v1_issue': '⚠️ Lifecycle contamination',
+            'evolution_v2_title': '**v2 (FIELD-only):**',
+            'evolution_v2_devices': '762 devices (clean production)',
+            'evolution_v2_perf': 'Recall 57.1%, Precision 57.1%',
+            'evolution_v2_auc': '**AUC 0.9186** (+6.6%)',
+            'evolution_v2_benefit': '✅ Better calibration',
+            'technical_title': '� Technical Approach & Model Evolution',
+            'technical_intro': 'Our solution evolved through **two major versions**, learning critical lessons about data quality and lifecycle contamination.',
+            'tab_v1': '📦 v1: Mixed FACTORY+FIELD (Nov 2025)',
+            'tab_v2': '✨ v2: FIELD-only Clean Data (Nov 13, 2025)',
         },
     },
     
@@ -523,14 +546,37 @@ TRANSLATIONS = {
         'research': {
             'title': '📖 Contexto de Pesquisa & Metodologia',
             'subtitle': 'Entendendo o Problema de Manutenção Preditiva IoT',
+            'model_version_info': '📊 **Modelo Atual:** v2.0 FIELD-only (13 de novembro de 2025) | Esta página documenta a jornada completa de pesquisa do v1 ao v2',
             'problem_title': '🔧 O Problema de Negócio',
-            'data_title': '📊 O Dataset',
-            'journey_title': '🔬 A Jornada de Descoberta',
-            'leakage_title': '🚨 Descoberta Crítica: Vazamento de Dados',
-            'solution_title': '✅ A Solução',
-            'results_title': '📈 Resultados & Impacto',
-            'lessons_title': '💡 Principais Lições Aprendidas',
-            'next_title': '🚀 Próximos Passos',
+            'problem_content': """**Falhas de Dispositivos IoT em Ambientes de Produção**
+
+Nossa organização implantou **789 dispositivos IoT** para aplicações críticas de monitoramento. 
+Ao longo do tempo, **45 dispositivos (5.7%) apresentaram falhas críticas** exigindo manutenção emergencial.
+
+**Desafios:**
+- 🚨 **Tempo de inatividade não planejado** causa perda de receita e insatisfação do cliente
+- ⚙️ **Reparos emergenciais** custam 3-5x mais que manutenção preventiva
+- 📊 **Sem sistema de alerta precoce** - falhas descobertas reativamente
+- 🔍 **Inspeção manual** de 789 dispositivos inviável (restrições de recursos)
+
+**Objetivo de Negócio:**
+Construir um modelo de machine learning para **prever dispositivos críticos ANTES da falha** 
+habilitando **manutenção preventiva** e **otimização de recursos**.""",
+            'evolution_box_title': '**Evolução do Modelo**',
+            'evolution_v1_title': '**v1 (Dados Mistos):**',
+            'evolution_v1_devices': '789 dispositivos (FACTORY+FIELD)',
+            'evolution_v1_perf': 'Recall 78.6%, Precisão 84.6%',
+            'evolution_v1_auc': 'AUC 0.8621',
+            'evolution_v1_issue': '⚠️ Contaminação de ciclo de vida',
+            'evolution_v2_title': '**v2 (FIELD-only):**',
+            'evolution_v2_devices': '762 dispositivos (produção limpa)',
+            'evolution_v2_perf': 'Recall 57.1%, Precisão 57.1%',
+            'evolution_v2_auc': '**AUC 0.9186** (+6.6%)',
+            'evolution_v2_benefit': '✅ Melhor calibração',
+            'technical_title': '🔬 Abordagem Técnica & Evolução do Modelo',
+            'technical_intro': 'Nossa solução evoluiu através de **duas versões principais**, aprendendo lições críticas sobre qualidade de dados e contaminação de ciclo de vida.',
+            'tab_v1': '📦 v1: FACTORY+FIELD Mistos (Nov 2025)',
+            'tab_v2': '✨ v2: Dados Limpos FIELD-only (13 Nov 2025)',
         },
     }
 }

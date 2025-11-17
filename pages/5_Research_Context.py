@@ -20,7 +20,7 @@ st.markdown(f"### {get_text('research', 'subtitle', lang)}")
 st.markdown("---")
 
 # Model Version Indicator
-st.info("📊 **Current Model:** v2.0 FIELD-only (November 13, 2025) | This page documents the complete research journey from v1 to v2")
+st.info(get_text('research', 'model_version_info', lang))
 
 st.markdown("---")
 
@@ -30,51 +30,33 @@ st.subheader(get_text('research', 'problem_title', lang))
 col1, col2 = st.columns([2, 1])
 
 with col1:
-    st.markdown("""
-    **IoT Device Failures in Production Environments**
-    
-    Our organization deployed **789 IoT devices** for critical monitoring applications. 
-    Over time, **45 devices (5.7%) exhibited critical failures** requiring emergency maintenance.
-    
-    **Challenges:**
-    - 🚨 **Unplanned downtime** causes revenue loss and customer dissatisfaction
-    - ⚙️ **Emergency repairs** cost 3-5x more than preventive maintenance
-    - 📊 **No early warning system** - failures discovered reactively
-    - 🔍 **Manual inspection** of 789 devices infeasible (resource constraints)
-    
-    **Business Objective:**
-    Build a machine learning model to **predict critical devices BEFORE failure** 
-    enabling **preventive maintenance** and **resource optimization**.
-    """)
+    st.markdown(get_text('research', 'problem_content', lang))
 
 with col2:
-    st.info("""
-    **Model Evolution**
-    
-    **v1 (Mixed Data):**
-    - 789 devices (FACTORY+FIELD)
-    - Recall 78.6%, Precision 84.6%
-    - AUC 0.8621
-    - ⚠️ Lifecycle contamination
-    
-    **v2 (FIELD-only):**
-    - 762 devices (clean production)
-    - Recall 57.1%, Precision 57.1%
-    - **AUC 0.9186** (+6.6%)
-    - ✅ Better calibration
-    """)
+    st.info(f"""{get_text('research', 'evolution_box_title', lang)}
+
+{get_text('research', 'evolution_v1_title', lang)}
+- {get_text('research', 'evolution_v1_devices', lang)}
+- {get_text('research', 'evolution_v1_perf', lang)}
+- {get_text('research', 'evolution_v1_auc', lang)}
+- {get_text('research', 'evolution_v1_issue', lang)}
+
+{get_text('research', 'evolution_v2_title', lang)}
+- {get_text('research', 'evolution_v2_devices', lang)}
+- {get_text('research', 'evolution_v2_perf', lang)}
+- {get_text('research', 'evolution_v2_auc', lang)}
+- {get_text('research', 'evolution_v2_benefit', lang)}
+""")
 
 st.markdown("---")
 
 # Section 2: Technical Approach
-st.subheader("🔬 Technical Approach & Model Evolution")
+st.subheader(get_text('research', 'technical_title', lang))
 
-st.markdown("""
-Our solution evolved through **two major versions**, learning critical lessons about data quality and lifecycle contamination.
-""")
+st.markdown(get_text('research', 'technical_intro', lang))
 
 # Model Evolution Tabs
-tab_v1, tab_v2 = st.tabs(["📦 v1: Mixed FACTORY+FIELD (Nov 2025)", "✨ v2: FIELD-only Clean Data (Nov 13, 2025)"])
+tab_v1, tab_v2 = st.tabs([get_text('research', 'tab_v1', lang), get_text('research', 'tab_v2', lang)])
 
 with tab_v1:
     st.markdown("""
