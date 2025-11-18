@@ -211,6 +211,7 @@ with tab2:
     - ✅ Better probability calibration (AUC 0.8621 → 0.9186)
     
     ### ⚖️ Trade-off: "2 Steps Back, 3 Forward"
+    """)
     
     col1, col2 = st.columns(2)
     
