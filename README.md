@@ -87,7 +87,19 @@ Sistema preditivo baseado em **Machine Learning** que analisa padrões de compor
 #### Performance (Test Set: 229 FIELD-only devices, 14 críticos)
 
 **Baseline Threshold 0.50:**
+
 - ✅ **Precision:** 57.1% (8 TP, 6 FP)
+- ✅ **Recall:** 57.1% (8/14 dispositivos críticos detectados)
+- ✅ **ROC-AUC:** 0.9186 - Excelente capacidade de discriminação
+- ✅ **F1-Score:** 0.571 - Equilíbrio entre precision e recall
+- ⚠️ **Miss Rate:** 42.9% (6/14 críticos NÃO detectados)
+
+**Contexto de Performance:**
+
+- Dataset pequeno: 46 amostras críticas (total), 14 em test set
+- Hyperparameters default (sem tuning GridSearch)
+- Trade-off consciente: dados limpos (57.1%) > métricas infladas (78.6% v1 contaminado)
+- Uso recomendado: Sistema de alerta antecipado, NÃO ferramenta única de decisão
 - ✅ **Recall:** 57.1% (8/14 dispositivos críticos detectados)
 - ✅ **F1-Score:** 0.571 - Equilíbrio entre precision e recall
 - ✅ **ROC-AUC:** 0.9186 - Excelente capacidade de discriminação
@@ -121,7 +133,30 @@ Durante o desenvolvimento, foi identificado e corrigido um problema crítico de 
 - **Fundação sólida** validada cientificamente para melhorias futuras (FASE 3)
 - Demonstração de maturidade técnica: data quality > model complexity
 
-**Filosofia do projeto:** "2 passos atrás, 3 passos à frente" - sacrificar métricas infladas para garantir **rigor científico** e dados limpos.
+**Filosofia:** "2 passos atrás, 3 passos à frente" - sacrificar métricas infladas para garantir **rigor científico** e dados limpos.
+
+### ⚠️ Limitações Conhecidas
+
+**Transparência é valor fundamental deste projeto.** 10 limitações estão documentadas em [MODEL_V2_KNOWN_ISSUES.md](docs/MODEL_V2_KNOWN_ISSUES.md):
+
+1. **Miss Rate 42.9%** - 6 de 14 dispositivos críticos não detectados no test set
+2. **Dataset Pequeno** - Apenas 46 amostras críticas totais (ideal: 100+)
+3. **Sem Hyperparameter Tuning** - Parâmetros default do CatBoost (iterations=100, depth=6)
+4. **Signal Variance Ambiguity** - Features de sinal podem alertar para problemas ambientais, não do device
+5. **Validação em Dataset Misto** - Experimentos conduzidos antes da limpeza FACTORY (métricas não aplicáveis)
+
+**Recomendação de Uso:**
+- ✅ Sistema de priorização para equipes de campo
+- ✅ Dashboard de early warning combinado com monitoramento existente
+- ✅ Human-in-the-loop (validação humana antes de ação)
+- ❌ NÃO usar como único critério de decisão para manutenção
+- ❌ NÃO para decisões autônomas sem supervisão técnica
+
+**Roadmap FASE 3:** Temporal features (+20% recall projetado), hyperparameter tuning (+10% recall), data collection (100+ critical samples).
+
+---
+
+## 🌐 Democratização de Machine Learning
 
 ---
 
