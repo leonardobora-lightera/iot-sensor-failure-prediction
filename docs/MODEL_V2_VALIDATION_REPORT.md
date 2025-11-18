@@ -1,34 +1,63 @@
 # Model v2 FIELD-only - Validation Report
 
-**Document Version:** 1.0  
+**Document Version:** 1.1 (Revised Nov 18, 2025)  
 **Date:** November 14, 2025  
 **Model Version:** CatBoost v2.0 FIELD-only (trained Nov 13, 2025)  
 **Validation Team:** Leonardo Costa (Data Science)  
-**Status:** ✅ **MODEL VALIDATED - PRODUCTION READY**
+**Status:** ⚠️ **EXPERIMENTAL VALIDATION - MVP/POC READY**
+
+---
+
+## ⚠️ IMPORTANT DISCLAIMER
+
+**This validation report documents experiments conducted on November 14, 2025, BEFORE the Discovery 0 data cleanup was fully understood.**
+
+**Critical Context:**
+- **Experiments 1-3 used 789-device MIXED dataset** (FIELD + FACTORY lifecycle data)
+- **Threshold experiment used 237-device test set** from pre-cleanup split
+- **TRUE v2.0 FIELD-only baseline:** 57.1% precision/recall (from metadata.json, 229 FIELD-only test set)
+- **Experimental metrics (90.9% precision, 71.4% recall) NOT applicable to final v2.0 model**
+
+**Purpose of this document:**
+- Documents research methodology and validation approach
+- Demonstrates feature importance analysis and threshold optimization techniques
+- Provides insights for future model iterations (FASE 3)
+- **NOT a production validation report** - use metadata.json for true v2.0 performance
+
+**For accurate v2.0 metrics, refer to:** `models/catboost_pipeline_v2_metadata.json`
 
 ---
 
 ## 📋 Executive Summary
 
-This report presents the comprehensive technical validation of the **IoT Sensor Failure Prediction Model v2 (FIELD-only)**. Three independent experiments were conducted to assess model health, feature contribution, and classification performance.
+This report documents **experimental validation** of the IoT Sensor Failure Prediction Model v2 conducted on November 14, 2025. Three experiments assessed model behavior, feature contribution, and threshold optimization.
 
-### Key Findings
+### ⚠️ Key Limitation
 
-✅ **Model Scientifically Validated**
-- Critical device detection capability confirmed through outlier analysis
-- Temporal feature (`days_since_last_message`) contributes significantly (Rank #8/30, 4.73%)
-- Classification performance exceeds baseline with optimized threshold
+**Experiments used pre-cleanup MIXED dataset (789 devices FIELD+FACTORY).** Metrics reported here DO NOT reflect true v2.0 FIELD-only performance.
 
-✅ **Performance Metrics (Threshold 0.60)**
-- **Precision: 90.9%** (9 out of 10 alerts are true positives)
-- **Recall: 71.4%** (detects 10 out of 14 critical devices)
-- **F1-Score: 0.800** (balanced performance)
-- **50% reduction in false positives** vs baseline threshold 0.50
+**TRUE v2.0 Baseline (from metadata.json):**
+- **Precision: 57.1%** (8 TP, 6 FP on 229 FIELD-only test set)
+- **Recall: 57.1%** (8/14 critical devices detected)
+- **F1-Score: 0.571**
+- **ROC-AUC: 0.9186**
 
-✅ **Primary Recommendation**
-- **Deploy with threshold 0.60-0.70** for production use
-- Reduces false alarms while maintaining high detection rate
-- Suitable for maintenance teams with limited resources
+### Research Findings (Experimental Dataset)
+
+✅ **Feature Importance Validated**
+- Critical device detection capability demonstrated via outlier analysis
+- Temporal feature (`days_since_last_message`) ranks #8/30 (4.73% importance)
+- Optical features dominate (31.39% total contribution)
+
+✅ **Experimental Metrics (237-device MIXED test set, Threshold 0.60)**
+- **Precision: 90.9%** (⚠️ NOT applicable to v2.0 FIELD-only)
+- **Recall: 71.4%** (⚠️ NOT applicable to v2.0 FIELD-only)
+- **F1-Score: 0.800** (⚠️ Experimental only)
+
+✅ **Methodology Insights**
+- Threshold optimization technique validated for future iterations
+- Outlier analysis correlates with model probabilities
+- Signal variance features (rsrp_std, snr_std) show predictive value
 
 ### Validation Experiments Conducted
 
@@ -346,22 +375,27 @@ Single outlier (`rsrq_min=-28`) suggests device experienced temporary signal qua
 
 ### Key Findings
 
-#### 1. Baseline Performance Exceeds Expectations
+#### 1. ⚠️ Metrics Discrepancy - CRITICAL
 
-**Reported Metrics (Model Metadata):**
+**TRUE v2.0 FIELD-only Metrics (metadata.json - 229 test devices):**
 - Precision: 57.1%
 - Recall: 57.1%
+- F1-Score: 0.571
+- ROC-AUC: 0.9186
+- Test set: 229 FIELD-only devices (14 critical, 215 normal)
 
-**Observed Metrics (Threshold Experiment):**
-- Precision: **83.3%** (+26.2pp)
-- Recall: **71.4%** (+14.3pp)
+**Experimental Metrics (THIS REPORT - 237 test devices MIXED):**
+- Precision: **83.3%** at threshold 0.50
+- Recall: **71.4%** at threshold 0.50
+- Test set: 237 MIXED devices (FIELD + FACTORY)
 
-**Discrepancy Explanation:**
-- Experiment used 789 devices (v1 dataset) vs 762 FIELD-only (v2 training)
-- `days_since_last_message` was imputed as 0 (feature didn't exist in v1 dataset)
-- Different train/test split may have been used
+**Why the Discrepancy:**
+- ❌ Experiment used 789-device MIXED dataset (pre-Discovery 0 cleanup)
+- ❌ Test set included FACTORY lifecycle data (27 devices contamination)
+- ❌ Different train/test split than final v2.0 model
+- ❌ Experimental metrics are INFLATED by data contamination
 
-**Recommendation:** Re-run experiment with exact v2 training/test split to confirm true baseline metrics.
+**CONCLUSION:** **Use 57.1% as TRUE v2.0 baseline.** Experimental metrics (83.3%/71.4%) are NOT valid for FIELD-only model.
 
 #### 2. Optimal Threshold: 0.60-0.70
 
@@ -400,63 +434,66 @@ Thresholds 0.60-0.75 produce **identical results**:
 - **Loses 1 true positive** (9 TP vs 10 TP)
 - NOT recommended - sacrifices recall without precision gain
 
-### Recommendation
+### Experimental Insight (Not Production Recommendation)
 
-✅ **Deploy with Threshold 0.60** for production
+⚠️ **Threshold optimization approach validated for future iterations**
 
-**Justification:**
-1. **High Precision (90.9%)** - Reduces false alarms (critical for limited maintenance teams)
-2. **Acceptable Recall (71.4%)** - Detects majority of critical devices
-3. **Optimal F1 (0.800)** - Best balance of precision/recall
-4. **Business Alignment** - Prioritizes high-confidence alerts over maximum coverage
+**Research Finding:**
+Threshold 0.60 showed 90.9% precision / 71.4% recall on experimental MIXED dataset, but these metrics DO NOT apply to v2.0 FIELD-only.
 
-**Alternative:** If business requirement changes to maximize recall (e.g., critical infrastructure), use threshold 0.50 (83.3% precision, 71.4% recall).
+**Methodology Contribution:**
+1. Demonstrated precision-recall trade-off analysis technique
+2. Showed threshold adjustment can reduce false positives
+3. Identified stable threshold range (0.60-0.75 produced identical results)
+4. Validated approach for FASE 3 model tuning
+
+**For v2.0 FIELD-only:** Use default threshold 0.50 with TRUE baseline 57.1% precision/recall. Threshold optimization should be re-run on clean FIELD-only test set in future iterations.
 
 ---
 
 ## 🎯 Conclusions & Key Takeaways
 
-### Model Validation Status
+### Experimental Validation Status
 
-✅ **MODEL v2 FIELD-only is SCIENTIFICALLY VALIDATED**
+⚠️ **MODEL v2 FIELD-only - EXPERIMENTAL VALIDATION COMPLETED**
 
-**Evidence:**
-1. **Critical Detection Capability Confirmed:**
-   - Device 866207059671895 (12 outliers) correctly identified as severely degraded
-   - Outlier analysis correlates with model probabilities
-   - Model detects multi-dimensional failure patterns (temp + battery + signal + optical)
+**TRUE v2.0 Performance (FIELD-only 229 test devices):**
+- **Precision/Recall: 57.1%** (honest baseline)
+- **ROC-AUC: 0.9186** (strong discriminative capability)
+- **Status: MVP/POC validated** for research and early-stage deployment with human oversight
 
-2. **Temporal Feature Validated:**
-   - `days_since_last_message` achieved Rank #8/30 (4.73% contribution)
-   - TOP 10 feature confirms FASE 2 enhancement was successful
-   - Inactivity is a valid risk indicator
+**Research Contributions from Experimental Analysis:**
 
-3. **Performance Optimization Achieved:**
-   - Threshold 0.60 achieves 90.9% precision with 71.4% recall
-   - 50% reduction in false positives vs baseline
-   - F1-Score 0.800 (balanced performance)
+1. **Critical Detection Methodology Validated:**
+   - Device 866207059671895 (12 outliers) demonstrates multi-dimensional failure detection
+   - Outlier analysis technique applicable to future validation efforts
+   - Model captures temperature, battery, signal, and optical degradation patterns
 
-### Production Recommendations
+2. **Temporal Feature Value Confirmed:**
+   - `days_since_last_message` achieved Rank #8/30 (4.73% importance)
+   - TOP 10 feature - FASE 2 enhancement was strategically valuable
+   - Inactivity is a valid risk indicator for future models
 
-#### 1. **Apply Threshold 0.60** ⭐ (HIGH PRIORITY)
+3. **Threshold Optimization Technique Demonstrated:**
+   - Precision-recall trade-off analysis methodology validated
+   - Technique applicable to FASE 3 model tuning on clean datasets
+   - Experimental finding: Threshold adjustments can significantly impact precision
 
-**Action:** Update Streamlit app (pages/2_Batch_Upload.py, pages/3_Single_Predict.py)
+### MVP Deployment Recommendations
 
-**Change:**
-```python
-# Current
-threshold = 0.50
+#### 1. **Use v2.0 with Default Threshold 0.50** ⭐ (CURRENT STATUS)
 
-# Recommended
-threshold = 0.60
-```
+**Current Deployment:** Streamlit app with threshold 0.50
 
-**Expected Impact:**
-- Precision: 83.3% → 90.9% (+7.6pp)
-- Recall: 71.4% (unchanged)
-- False positives: 50% reduction
+**TRUE v2.0 Performance:**
+- Precision: 57.1%
+- Recall: 57.1%
+- ROC-AUC: 0.9186
+- **Use Case:** Early warning system with human oversight, NOT autonomous decision-making
 
-#### 2. **Document Known Limitations** (MEDIUM PRIORITY)
+**Experimental threshold optimization (0.60) NOT recommended** until re-validated on FIELD-only dataset.
+
+#### 2. **Document Known Limitations** ✅ (COMPLETED)
 
 **Create:** `docs/MODEL_V2_KNOWN_ISSUES.md`
 
@@ -631,13 +668,15 @@ threshold = 0.60
 
 ## ✅ Sign-Off
 
-**Validation Status:** COMPLETE  
-**Model Status:** ✅ VALIDATED - PRODUCTION READY  
-**Recommended Threshold:** 0.60-0.70  
-**Primary Blocker:** Ground truth validation pending (STI Dashboard check)  
+**Validation Status:** EXPERIMENTAL VALIDATION COMPLETE  
+**Model Status:** ⚠️ **MVP/POC VALIDATED** - Research and early-stage deployment with human oversight  
+**TRUE v2.0 Baseline:** 57.1% precision/recall (metadata.json)  
+**Experimental Metrics:** NOT applicable to FIELD-only v2.0 model  
+**Use Case:** Early warning system, priority triaging, NOT autonomous decision-making
 
-**Next Review:** After ground truth validation completion (Enzo's feedback)
+**Critical Note:** This report documents research methodology validation. For production deployment decisions, use TRUE baseline metrics (57.1%) from `models/catboost_pipeline_v2_metadata.json`.
 
 **Prepared by:** Leonardo Costa  
-**Date:** November 14, 2025  
-**Version:** 1.0
+**Original Date:** November 14, 2025  
+**Revised:** November 18, 2025 (Post-Discovery 0 context update)  
+**Version:** 1.1

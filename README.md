@@ -12,7 +12,41 @@
 
 ## 📋 Sobre o Projeto
 
-Este projeto representa o **trabalho final de estágio** desenvolvido para o time de **Fault Management (Gestão de Falhas)** da Lightera LLC, com o objetivo de demonstrar como **Machine Learning pode transformar a operação de manutenção de dispositivos IoT** através da mudança de paradigma: de **manutenção corretiva** para **manutenção preditiva**.
+Este projeto representa o **trabalho final de estágio** desenvolvido para o time de **Fault Management (Gestão de Falhas)** da Lightera LLC, com o objetivo de **investigar e validar a viabilidade de Machine Learning** para transformar a operação de manutenção de dispositivos IoT através da mudança de paradigma: de **manutenção corretiva** para **manutenção preditiva**.
+
+### 🔬 Abordagem de Pesquisa
+
+**Este projeto demonstra metodologia científica aplicada:** formulação de hipótese → desenvolvimento → validação crítica → pivots estratégicos → aprendizados documentados.
+
+**Jornada de Desenvolvimento:**
+
+1. **Hipótese Inicial:** "Padrões de telemetria (bateria, sinal, óptica) podem prever falhas de dispositivos IoT antes que ocorram?"
+
+2. **v1.0 - Primeiro Modelo:** 78.6% recall com 789 dispositivos (aparentemente excelente)
+
+3. **🔍 Discovery 0 - Pensamento Crítico:** Ao investigar false positive, **identifiquei contaminação de dados** não documentada:
+   - 31.8% do dataset (362,343 mensagens) eram de ciclo FACTORY (testes de laboratório)
+   - 27 dispositivos de 789 total eram pré-deployment
+   - Métricas estavam infladas por padrões de teste, não produção real
+
+4. **💡 Pivot Estratégico - Resiliência:** Em vez de ignorar problema, **escolhi qualidade de dados sobre métricas infladas**:
+   - Filtrei dataset: 762 FIELD-only devices (100% produção)
+   - Re-treinei v2.0: Recall caiu para 57.1% (-21.5%)
+   - ROC-AUC melhorou +6.6% (0.8621 → 0.9186)
+   - **Fundação limpa > métricas impressionantes**
+
+5. **Tentativa de Melhoria v2.1:** Adicionei 3 temporal features (message_frequency, days_per_message, activity_ratio)
+   - Resultado: +0.1% recall (insuficiente)
+   - **Decisão baseada em critério:** Manter v2.0 57.1% baseline honesto
+
+6. **Resultado:** **MVP validado** com baseline honesto (57.1%), insights acionáveis, e roadmap claro para FASE 3
+
+**Demonstração de Skills:**
+- ✅ **Proatividade:** Auto-auditoria que descobriu Discovery 0
+- ✅ **Pensamento Crítico:** Questionei métricas "perfeitas", investiguei e encontrei contaminação
+- ✅ **Resiliência:** Aceitei queda de -21.5% recall para garantir dados limpos
+- ✅ **Rigor Científico:** Documentei limitações transparentemente (5 issues conhecidas)
+- ✅ **Planejamento Estratégico:** FASE 3 roadmap com metas realistas
 
 ### O Desafio
 
@@ -111,29 +145,44 @@ Sistema preditivo baseado em **Machine Learning** que analisa padrões de compor
 - Trade-off consciente: dados limpos (57.1%) > métricas infladas (78.6% v1 contaminado)
 - Uso recomendado: Sistema de alerta antecipado com supervisão humana
 
-#### 🔬 Contribuição Técnica: Discovery 0
+#### 🔬 Contribuição Técnica: Discovery 0 - Demonstração de Pensamento Crítico
 
-Durante o desenvolvimento, foi identificado e corrigido um problema crítico de **contaminação de dados**:
+**Contexto:** Durante análise de false positive, **questionei se métricas "boas demais" poderiam esconder problemas**.
 
-**O Problema:**
+**Metodologia de Investigação:**
+
+1. **Observação Inicial:** Device 861275072515287 alertado como crítico, mas operacional
+2. **Hipótese:** "Padrão de mensagens incomum sugere lifecycle diferente de produção"
+3. **Análise Exploratória:** 460 mensagens total = 179 FACTORY (39%) + 281 FIELD (61%)
+4. **Validação em Larga Escala:** 31.8% de TODAS as mensagens eram FACTORY (não apenas 1 device)
+5. **Pivot Estratégico:** Decisão de sacrificar métricas infladas por fundação limpa
+
+**O Problema Descoberto:**
 - **31.8% do dataset original** (362,343 mensagens) eram de ciclo de vida FACTORY (laboratório)
 - 27 dispositivos de 789 total (3.4%) eram de testes pré-deployment
-- **Exemplo:** Device 861275072515287 tinha 460 mensagens totais (179 FACTORY + 281 FIELD)
 - Esses devices contaminavam os padrões de produção com assinaturas de testes de laboratório
+- **Resultado:** Modelo v1 aprendia padrões de LAB, não CAMPO
 
-**A Solução:**
+**A Solução Implementada:**
 - Filtro MODE='FIELD' aplicado em todo o dataset
 - Dataset purificado: 762 devices (100% produção)
 - Modelo v2 treinado exclusivamente em dados reais de campo
 - Re-split estratificado: 533 train / 229 test (zero overlap)
 
-**O Resultado:**
-- ROC-AUC melhorou **+6.6%** (0.8621 → 0.9186)
-- Recall reduziu -21.5% (78.6% → 57.1%) **MAS** dados limpos
+**O Resultado da Decisão:**
+- ROC-AUC melhorou **+6.6%** (0.8621 → 0.9186) - modelo discrimina melhor
+- Recall reduziu -21.5% (78.6% → 57.1%) - **MAS com dados limpos e confiáveis**
 - **Fundação sólida** validada cientificamente para melhorias futuras (FASE 3)
-- Demonstração de maturidade técnica: data quality > model complexity
+- **Demonstração de maturidade técnica:** data quality > model complexity
 
-**Filosofia:** "2 passos atrás, 3 passos à frente" - sacrificar métricas infladas para garantir **rigor científico** e dados limpos.
+**Lições Aprendidas (Valor do Estágio):**
+- ✅ **Pensamento Crítico:** Questionar resultados "perfeitos" levou à descoberta
+- ✅ **Proatividade:** Auto-auditoria não solicitada identificou problema estrutural
+- ✅ **Resiliência:** Escolher queda de métrica (-21.5%) para garantir qualidade
+- ✅ **Rigor Científico:** Preferir baseline honesto (57.1%) a claims inflados (78.6%)
+- ✅ **Comunicação:** Documentar Discovery 0 transparentemente para stakeholders
+
+**Filosofia:** "2 passos atrás, 3 passos à frente" - sacrificar métricas infladas para garantir **rigor científico** e dados limpos que permitem evolução confiável.
 
 ### ⚠️ Limitações Conhecidas
 
@@ -160,7 +209,7 @@ Durante o desenvolvimento, foi identificado e corrigido um problema crítico de 
 
 ---
 
-## ⚠️ Limitações Conhecidas
+### ⚠️ Limitações Conhecidas
 
 **Transparência é valor fundamental deste projeto.** As 10 limitações estão documentadas em [MODEL_V2_KNOWN_ISSUES.md](docs/MODEL_V2_KNOWN_ISSUES.md):
 
@@ -171,6 +220,36 @@ Durante o desenvolvimento, foi identificado e corrigido um problema crítico de 
 3. **Sem Hyperparameter Tuning** - Parâmetros default do CatBoost utilizados
 4. **Signal Variance Ambiguity** - Pode alertar para problemas ambientais/rede, não apenas do device
 5. **Validação em Dataset Misto** - Experimentos de threshold foram conduzidos antes da limpeza FACTORY
+
+### 🎯 Posicionamento: MVP como Fundação para Valor Real
+
+**Status Atual:** Minimum Viable Product (MVP) validado cientificamente
+
+**O que este projeto NÃO é:**
+- ❌ Sistema de produção autônomo
+- ❌ Ferramenta de decisão crítica sem supervisão
+- ❌ Modelo otimizado com hyperparameter tuning
+- ❌ Dataset grande (100+ critical samples)
+
+**O que este projeto É:**
+- ✅ **Prova de conceito validada:** ML É viável para fault prediction
+- ✅ **Fundação técnica limpa:** Dados purificados, pipeline reproduzível
+- ✅ **Insights acionáveis HOJE:** optical_below_threshold #1 preditor (use para inspeções manuais)
+- ✅ **Roadmap claro FASE 3:** Temporal features (+20% recall), tuning (+10% recall)
+- ✅ **Demonstração de processo:** Hypothesis → validation → pivots → learnings
+
+**Valor Imediato (Sem Esperar FASE 3):**
+1. **Feature Importance:** Use `optical_below_threshold` como critério de priorização manual
+2. **Streamlit App:** Democratiza acesso a predições para perfis não-técnicos
+3. **Discovery 0:** Identificação de data quality issue (valor metodológico)
+4. **Pipeline Template:** Fundação para futuros modelos de fault prediction
+
+**Roadmap para Valor Operacional Completo (FASE 3):**
+- Temporal features avançadas: +20% recall projetado
+- Hyperparameter tuning: +10-15% recall projetado
+- Dataset expansion: 100+ critical samples (confiança estatística)
+- Temporal validation: Time-based split para generalização
+- **Target FASE 3:** 85%+ recall com fundação limpa
 
 ### Recomendações de Uso
 
@@ -407,16 +486,32 @@ iot_sensor_novembro/
 
 ---
 
-## 🔬 Documentação Técnica
+## 📝 Documentação Completa
 
-### Documentos Principais
+- **[CHANGELOG.md](CHANGELOG.md)** - Histórico de versões e descobertas (incluindo Discovery 0)
+- **[MODEL_V2_VALIDATION_REPORT.md](docs/MODEL_V2_VALIDATION_REPORT.md)** - Validação experimental (⚠️ Leia disclaimer sobre dataset)
+- **[MODEL_V2_KNOWN_ISSUES.md](docs/MODEL_V2_KNOWN_ISSUES.md)** - 10 limitações documentadas transparentemente
+- **[VALIDATION_CHECKLIST_V2.md](docs/VALIDATION_CHECKLIST_V2.md)** - Critérios de validação científica
+- **[PLANO_ACAO_FIX_FALSOS_POSITIVOS.md](docs/PLANO_ACAO_FIX_FALSOS_POSITIVOS.md)** - Roadmap FASE 3
 
-- **[MODEL_V2_VALIDATION_REPORT.md](docs/MODEL_V2_VALIDATION_REPORT.md):** Relatório de validação científica (8 seções)
-  - 3 experimentos: Critical Devices Analysis, Feature Importance, Threshold Adjustment
-  - Metodologia completa, resultados, conclusões
-- **[MODEL_V2_KNOWN_ISSUES.md](docs/MODEL_V2_KNOWN_ISSUES.md):** 10 limitações conhecidas documentadas
-  - Miss rate 42.9%, signal variance ambiguity, small dataset size, etc.
-- **[LEAKAGE_DISCOVERY.md](docs/LEAKAGE_DISCOVERY.md):** Framework de detecção de data leakage (7 testes)
+---
+
+## 🙏 Agradecimentos
+
+Este projeto de estágio foi desenvolvido com apoio e orientação do time de **Fault Management** da Lightera LLC. Agradecimento especial aos mentores que incentivaram **pensamento crítico, transparência e rigor científico** ao longo da jornada.
+
+**Lições do Estágio:**
+- Questionar resultados "perfeitos" leva a descobertas reais (Discovery 0)
+- Dados limpos > métricas impressionantes
+- Transparência sobre limitações > claims inflados
+- Resiliência para aceitar quedas métricas (-21.5%) quando necessário
+- MVP bem fundamentado > sistema "production-ready" sem validação
+
+---
+
+**Última atualização:** 18 de Novembro de 2025 (v2.0 FIELD-only + Discovery 0 + Research Methodology)  
+**Autor:** Leonardo Costa | Lightera LLC Internship  
+**Contato:** leonardo.costa@lightera.io
 - **[CHANGELOG.md](CHANGELOG.md):** Timeline evolutiva completa (13 fases de desenvolvimento)
 - **[PROJECT_AUDIT_NOV17.md](docs/PROJECT_AUDIT_NOV17.md):** Auditoria de preparação para apresentação final
 
