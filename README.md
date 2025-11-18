@@ -84,22 +84,73 @@ Sistema preditivo baseado em **Machine Learning** que analisa padrões de compor
 
 **Features:** 30 variáveis explicáveis (telemetria de bateria, sinal óptico, conectividade, mensageria, tempo de inatividade).
 
-#### Performance (Test Set: 229 devices, 14 críticos)
+#### Performance (Test Set: 229 FIELD-only devices, 14 críticos)
 
-- ✅ **Detection Rate:** 57.1% (8/14 dispositivos críticos identificados corretamente)
-- ✅ **Precision:** 57.1% (8 TP, 6 FP - baixo ruído)
-- ✅ **ROC-AUC:** 0.9186 - Excelente capacidade de discriminação
+**Baseline Threshold 0.50:**
+- ✅ **Precision:** 57.1% (8 TP, 6 FP)
+- ✅ **Recall:** 57.1% (8/14 dispositivos críticos detectados)
 - ✅ **F1-Score:** 0.571 - Equilíbrio entre precision e recall
+- ✅ **ROC-AUC:** 0.9186 - Excelente capacidade de discriminação
+- ⚠️ **Miss Rate:** 42.9% (6/14 dispositivos críticos NÃO detectados)
+
+**Contexto de Performance:**
+- Dataset pequeno: 46 amostras críticas (total), 14 em test set
+- Hyperparameters default CatBoost (sem tuning)
+- Trade-off consciente: dados limpos (57.1%) > métricas infladas (78.6% v1 contaminado)
+- Uso recomendado: Sistema de alerta antecipado com supervisão humana
 
 #### 🔬 Contribuição Técnica: Discovery 0
 
-Durante o desenvolvimento, foi identificado e corrigido um problema de **contaminação de dados** (data leakage):
-- **31.8% do dataset original** (27 dispositivos de 789) eram de ciclo de vida FACTORY (laboratório)
-- Esses devices contaminavam os padrões de produção (FIELD)
-- **Solução:** Separação completa FIELD vs FACTORY - garantindo modelo treinado apenas em dados reais de campo
-- **Resultado:** Modelo v2 com **fundação sólida** para evoluções futuras
+Durante o desenvolvimento, foi identificado e corrigido um problema crítico de **contaminação de dados**:
 
-**Filosofia do projeto:** "2 passos atrás, 3 passos à frente" - sacrificar otimizações prematuras para garantir **rigor científico** e dados limpos.
+**O Problema:**
+- **31.8% do dataset original** (362,343 mensagens) eram de ciclo de vida FACTORY (laboratório)
+- 27 dispositivos de 789 total (3.4%) eram de testes pré-deployment
+- **Exemplo:** Device 861275072515287 tinha 460 mensagens totais (179 FACTORY + 281 FIELD)
+- Esses devices contaminavam os padrões de produção com assinaturas de testes de laboratório
+
+**A Solução:**
+- Filtro MODE='FIELD' aplicado em todo o dataset
+- Dataset purificado: 762 devices (100% produção)
+- Modelo v2 treinado exclusivamente em dados reais de campo
+- Re-split estratificado: 533 train / 229 test (zero overlap)
+
+**O Resultado:**
+- ROC-AUC melhorou **+6.6%** (0.8621 → 0.9186)
+- Recall reduziu -21.5% (78.6% → 57.1%) **MAS** dados limpos
+- **Fundação sólida** validada cientificamente para melhorias futuras (FASE 3)
+- Demonstração de maturidade técnica: data quality > model complexity
+
+**Filosofia do projeto:** "2 passos atrás, 3 passos à frente" - sacrificar métricas infladas para garantir **rigor científico** e dados limpos.
+
+---
+
+## ⚠️ Limitações Conhecidas
+
+**Transparência é valor fundamental deste projeto.** As 10 limitações estão documentadas em [MODEL_V2_KNOWN_ISSUES.md](docs/MODEL_V2_KNOWN_ISSUES.md):
+
+### Principais Constraints
+
+1. **Miss Rate 42.9%** - 6 de 14 dispositivos críticos não detectados no test set
+2. **Dataset Pequeno** - Apenas 46 amostras críticas no total (ideal: 100+)
+3. **Sem Hyperparameter Tuning** - Parâmetros default do CatBoost utilizados
+4. **Signal Variance Ambiguity** - Pode alertar para problemas ambientais/rede, não apenas do device
+5. **Validação em Dataset Misto** - Experimentos de threshold foram conduzidos antes da limpeza FACTORY
+
+### Recomendações de Uso
+
+✅ **USAR PARA:**
+- Sistema de priorização para equipes de campo
+- Dashboard de early warning (alerta antecipado)
+- Human-in-the-loop (validação humana antes de ação)
+- Planejamento de manutenção preventiva
+
+❌ **NÃO USAR PARA:**
+- Único critério de decisão para substituição de devices
+- Decisões autônomas sem supervisão técnica
+- Acionamento automático de alarmes críticos
+
+**Roadmap FASE 3:** Temporal features (+20% recall projetado), hyperparameter tuning (+10% recall), target 85%+ recall.
 
 ---
 
@@ -399,9 +450,10 @@ Todos os direitos reservados.
 
 ---
 
-**Última Atualização:** 17 de Novembro de 2025  
+**Última Atualização:** 18 de Novembro de 2025  
 **Versão Modelo:** v2.0 FIELD-only (CatBoost + SMOTE 0.5)  
-**Streamlit App:** 5 páginas, deploy em produção
+**Métricas Baseline:** 57.1% precision/recall (229 FIELD-only test set)  
+**Streamlit App:** 5 páginas bilíngues (EN/PT-BR), deploy em produção
 
 ---
 
