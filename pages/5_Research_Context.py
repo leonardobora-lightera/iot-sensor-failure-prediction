@@ -773,8 +773,6 @@ with tab5:
     st.markdown("""
     End-to-end machine learning pipeline from data input to validated MVP.
     
-    [🎨 Edit Diagram 1 - Pipeline](https://mermaidchart.com/play?utm_source=mermaid_mcp_server&utm_medium=remote_server&utm_campaign=vscode#pako:eNp1U8mO2zAM_RVBQAsUmNE2OxAUsN3ZATKLk6ZoMUCRaGzBliRIchsY-fdeOXHTGToXQ-b67Yf-AW62sBlEeh-sPgpo6DxDoJ6v5P9e6N9fv_yC_eNW90e6bbl3U_H_rO71tW4O4_2b9a8m_nbdTWB_P4KVwpl-vIddbUkrqrgvp28zqBOA6fRegRQJ3cMQussnCPPfoTMQ-r3haOjewiXvRnew7I3r3Qy5v_j-6z9__7i9H4xceT-dDOe9sTuctifTcTscTOvdNLh8-_XxavOC5wH7KhP89-9gc7nszLp1keUfv_x4WQV3s3N3fg7T1V95lE8KrrtTl_NdIV2WOpHzbE0WRGIL8hy-ZFC3S8qAIOkJaYdY64MR3exw-jBGkiVhUSHO_2TkxkmqkMUcNJkJFB8nMKNji-lTSg5iXjDzVwIlsZkHE7SbRYZ-Yd7p56kFspmDJAvBv26h2jJKN3bgjKHlA0kgOlhJXBqFnpY85lIfYrOL6rM8Y0OAyDMW0TYs5UQSVa5bov8U0qTyV68f05xfQ9MmbUiGA2BOgpB_zCMF34VB3q-7gV9rZk5YqcQ_fT_0vRoW5c5i0j6IyEkmECT7FPxJo9dHaqI-EnQFA-zpSed-zeh_mVVVMSMc7IlP4j-D3O5-UVGHnXAoCK6RE5KmCJ-zlM7Jtk3vbQbsbRMx6xyIGE5xBttMWrbVLx3zVN3Nyn4_2m1NKVoTstXP-4p87lEGcdQ8_6t77aVQJjhfKEkYJgIgXgjNQv0I3P_FYgJtRBe7hU0GZZbXyJ-U_o7fmj0l0qYo1WIJLhHWlFtN3G5TdOZ5ItXG6w9xfLCYpzJlLBBbRscu5L-7r3fewt6wIZNbP2WfyJMr7Kvi9tXJ4Nhr9dz-Aw7PMwY)
-    
     **Pipeline Stages:**
     - **Data Input:** 762 FIELD-only devices
     - **Imputation:** SimpleImputer with median strategy
@@ -785,16 +783,7 @@ with tab5:
     - **Result:** MVP/POC Validated
     """)
     
-    st.code("""
-flowchart TD
-    A[Data Input<br/>762 devices FIELD-only] --> B[SimpleImputer median]
-    B --> C[Stratified Split<br/>70/30: 533 train, 229 test]
-    C --> D[SMOTE 0.5<br/>Balanced ~250/class]
-    D --> E[CatBoost<br/>100 iterations, depth 6, lr 0.1]
-    E --> F[Predictions]
-    F --> G[Metrics<br/>Recall 57.1%, Precision 57.1%, AUC 0.9186]
-    G --> H[Model v2.0<br/>MVP/POC Validated]
-    """, language="mermaid")
+    st.image("images/diagrams/pipeline.png", use_container_width=True, caption="Model v2.0 Pipeline: Data → Training → Validation")
     
     st.markdown("---")
     
@@ -802,8 +791,6 @@ flowchart TD
     st.markdown("### 2️⃣ Discovery 0: Contamination Investigation")
     st.markdown("""
     Root cause analysis of v1 false positives and strategic pivot to v2 FIELD-only.
-    
-    [🎨 Edit Diagram 2 - Discovery 0](https://mermaidchart.com/play?utm_source=mermaid_mcp_server&utm_medium=remote_server&utm_campaign=vscode#pako:eNqNVctu2zAQ_JWFD01QwJIVv4ogKGC7SQ-JX_EhbQAhXdmEKZEgKTcxjF79l36D0UMvPfTQW36j_Yrt0pQluwmQixUl7pAcznBmdvdgAO-AG2HI3pBHbRTMrSdU5Kvj-O86_vvvn_9gfD61vSPdttw7Eb9_ldy_GHgEzucQJxiQI8tTi3sQ-jS6SlA8OttG1-oQYu16OjJcE_QyK9VgiClGPF4gq2r3-vsQYEoJiucnBcVTZSuYlYPEj6ID2Ou3e5tlzZjzKwGLBH15awUBFYSnmCy3Zr8-ffv98z0UjTtl-tB0B_aJaZ3Cbnl05EcCYcoFlTTF6jtYikJSuS8pZ-fadTpVk5xVh-nu70bYG37uOyfT8pyxJv0FZXm9gJimnKfN4F6Z13MNz3xsDWBqndhepWiieKgPVQIRKlR5Q4kcKe_76-s7sOMMH5wVnCLGs0P1yMRqCGSxMPI1BnCBMqFEnP0D9PltCfRoBQmeXdEomDnFG44sczzscBYtK4IRqskHvvDP6swwBvm0E3yFRM4yfo75xBx45vCOi8S5-r7ljU6LOOELKjBogK1ZFO7Rd2KFdN3KPnr3EE6NsTU0PMueVP7p6TW-zaGleqND3b22thktXWt3K6Uce9Aynw8O4KC9r_V7cNCryTjiTPkBzn2BMmEISrUVILvwGcH1ZHs1ehqYk5ExGZjH5qQarYeLmCdqtKFwa7YgjdGuwXKaO50qp2KXPYedW0VcGX1tjmsrEzDF-hodPoDuJjxsgJf5Ofq0PyixFmlcqrtX1R-fTGFqu1YmrTV53BB9LUMmXxnwBPsUxQquBL5MdW32XC1WJkZjtqplPtMIheBMqOu1w3cYm67rTVz1dpzJjWEyb1YL4V1QdknZvR4cKhvCs6s-UqaCQzgqPP6Y4aCgEUWlbP3UJdqRpCElYNM5T-oxL-BExH6iapYN5kKuI1zeihBSZaPb2An1MOinb65HIqMMw33yoJ5RaF4ZJeQjr0dn5xdx0scfsl-XKx-vO3NhN8R6KBP0f2XrkJUdBweh1whvvNnLUxDoXS7ZVnuEd958Ax0BIAI)
     
     **Investigation Flow:**
     - **Trigger:** Device 861275072515287 flagged 99.8% critical (false positive)
@@ -815,14 +802,18 @@ flowchart TD
     - **Lesson:** Data Quality > Model Complexity, Critical Thinking > Perfect Metrics
     """)
     
+    st.image("images/diagrams/discovery0.png", use_container_width=True, caption="Discovery 0: Root Cause Investigation → Strategic Pivot to v2 FIELD-only")
+    
+    st.markdown("---")
+    
+    # Diagram 3: Research Journey
+    
     st.markdown("---")
     
     # Diagram 3: Research Journey
     st.markdown("### 3️⃣ Research Journey: 7 Phases")
     st.markdown("""
     Complete research methodology from hypothesis through v2.1 enhancement to MVP positioning.
-    
-    [🎨 Edit Diagram 3 - Research Journey](https://mermaidchart.com/play?utm_source=mermaid_mcp_server&utm_medium=remote_server&utm_campaign=vscode#pako:eNp1VMFu00AQ_ZWhqKhVlVA7JE2LKDKJSwxpHGxTqQoVctfjdKmza3m3RlHDkRsSEuKEQMCdD-B7-AH4BNZ27NpC5GArOzNvnt-82esNwgPcONgII_6aXPiJhLHzgoH6uVL925r9-frxB4xOp7Y3Ml3LvRPJ--fJ3cOBz-B4DHGCASWyPLW4B6FPo6sExcOzbWi1DiHVrqcjwzVBL7NSDYaYYsTjBbKqdq-_DwGmlKB4UzAonipbwawcJH4UHcBev93bLGvGnF8KmCfoy1srCKggPMVkuTX79enb75_voWjcKdOHljuwT0znFHbLoyM_EghTLqikKVbfwVIUks59STk7267TqZrkrDpau78JR8bAs53TsppwJv0FZXn1CmKacrnW4F6Z43qO4ZmPrQFMrRPbq2RNFA_1oUogQoUqb0iRI-V9f315B3ac4YOxgkvEePZUPTKxGgJZLIx8iQEsUCaUiLN_gD6_LYEerSDB8ysaBTOneMORZY6HLc6iZUUwQjX5wJf-WZ1ZxiCfdoKvkMhZxs8xn5gDzxzecJE4V9-3vNFpESd8QQUGDbA1i8I9-taskK5b2Udv78KJMbaGhmfZk8o_Pb3Gtzm0VG94qLvX1jahpWvtbqWUYw9axvPBAey297V-D3Z6NRlHnCk_wLkvMKIMQam2AmQXPiO4nmyvRk8DczIyJgPz2JxUo_VwEfNEjTZUbs0WpDHaNVhOc6dT5VTscuaws6uIK6OvzXFtZQKmWF-jwwfQ3YSHDfAyP0ef8IMSZ5HGpbp7Zf3xyRSmtmtl0lqTxw3R1zLk8pUCN7BPUazgSuDLVNdmz9ViZWI0Zqta5nONUAjOhLpePnyHsem69sRVb8OZ3Bgm82a1EN4FZZeUzevBobIhPLvyI2UqOITjwuP1DAcFjSgqZeunLlFHkoaUgEPnPKnHvMRnIvYTVbNsMBdyGWFxK0JIlY1uYyfUw6AevbkciowwDPfJvXpGsXlllJBzUo-Wzi_ipI89sl-PKx-vW2thN8R6KBP2f2Vrscu2HeyG3Xo8396KUxDoTU7ZRjfCG2_-AsePB-M)
     
     **Journey Phases:**
     1. **Hypothesis:** Can ML predict IoT failures?
@@ -841,14 +832,14 @@ flowchart TD
     - ✅ Transparency (honest baseline > inflated metrics)
     """)
     
+    st.image("images/diagrams/research_journey.png", use_container_width=True, caption="Research Journey: 7 Phases from Hypothesis to MVP Positioning")
+    
     st.markdown("---")
     
     # Diagram 4: FASE 3 Roadmap
     st.markdown("### 4️⃣ FASE 3 Roadmap: From 57.1% MVP to 85%+ Production")
     st.markdown("""
     Four parallel improvement tracks to achieve production-ready performance with clean FIELD-only data.
-    
-    [🎨 Edit Diagram 4 - FASE 3 Roadmap](https://mermaidchart.com/play?utm_source=mermaid_mcp_server&utm_medium=remote_server&utm_campaign=vscode#pako:eNqFVd1u40QUfpWjoiJQN4t_t60RK3ljt0RqfuS4hZWJosl4nAw7saPxJFVY7SU3XIC0iAsQEuIJuOV59gXgETiOYzduHRFFo-T8fGfmO39vT2gWsxPnJBHZPV0QqSD0vkkBP2OF_z6J_v3jx7_gyh37YEIwdL2-O_pYqM9n8rOXVzJbgn3-XD-F_t0IVAYX9ukZjGQWr6niWTr5tIQ6AIRO5yUoSegbHaF_eQ9h8Rt0B0K_PxoG7g1c-W54G_jjSaubEX347dd__v5p72g48OXrkR-M3MDt-6EfQHg76A2u251NjPnzD3tX0wHPDfFlIfhfj9zBuDcctLtZ0Yffv997WQc3vXNvegjx4Fee5fNKd32qRzFbiWy7ZKmakjmr2Av5kkHOU8qAIOkJaYdY64MR3exw-jBGkiVhUSHO_2TkxkmqkMUcNJkJFB8nMKNji-lTSg5iXjDzVwIlsZkHE7SbRYZ-Yd7p56kFspmDJAvBv26h2jJKN3bgjKHlA0kgOlhJXBqFnpY85lIfYrOL6rM8Y0OAyDMW0TYs5UQSVa5bov8U0qTyV68f05xfQ9MmbUiGA2BOgpB_zCMF34VB3q-7gV9rZk5YqcQ_fT_0vRoW5c5i0j6IyEkmECT7FPxJo9dHaqI-EnQFA-zpSed-zeh_mVVVMSMc7IlP4j-D3O5-UVGHnXAoCK6RE5KmCJ-zlM7Jtk3vbQbsbRMx6xyIGE5xBttMWrbVLx3zVN3Nyn4_2m1NKVoTstXP-4p87lEGcdQ8_6t77aVQJjhfKEkYJgIgXgjNQv0I3P_FYgJtRBe7hU0GZZbXyJ-U_o7fmj0l0qYo1WIJLhHWlFtN3G5TdOZ5ItXG6w9xfLCYpzJlLBBbRscu5L-7r3fewt6wIZNbP2WfyJMr7Kvi9tXJ4Nhr9dz-Aw7PMwY)
     
     **Improvement Tracks:**
     
@@ -878,6 +869,8 @@ flowchart TD
     **Target:** Recall ≥ 85%, Precision ≥ 80%, Clean FIELD-only data
     **Outcome:** Production ready with human oversight, 5-10% false alarms acceptable
     """)
+    
+    st.image("images/diagrams/fase3_roadmap.png", use_container_width=True, caption="FASE 3 Roadmap: 4 Parallel Tracks to 85%+ Production Ready")
 
 # Footer
 st.markdown("---")

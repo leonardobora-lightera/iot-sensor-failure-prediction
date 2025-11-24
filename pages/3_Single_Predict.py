@@ -4,18 +4,6 @@ Page 3: Single Prediction - Individual Device Assessment
 import streamlit as st
 import pandas as pd
 import sys
-from pathlib import Path
-
-# Add project root to path
-sys.path.append(str(Path(__file__).parent.parent))
-
-from utils.model_loader import load_pipeline, load_metadata
-from utils.visualization import create_metric_gauge
-from utils.translations import get_text, get_language_from_session
-
-# Get language
-lang = get_language_from_session(st.session_state)
-
 # Header
 st.title(get_text('single', 'title', lang))
 st.markdown(get_text('single', 'subtitle', lang))
@@ -126,11 +114,25 @@ with st.form("prediction_form"):
                 help="Maximum frame count observed (communication stress indicator)"
             )
         with col3:
+            # Automatic calculation for days_since_last_message
+            st.markdown(f"**{get_text('single', 'messaging_date_title', lang) if lang == 'pt-br' else 'Last Message Date'}**")
+            last_msg_date = st.date_input(
+                "Select date",
+                value=datetime.now().date(),
+                label_visibility="collapsed"
+            )
+            
+            # Calculate days difference
+            days_diff = (datetime.now().date() - last_msg_date).days
+            if days_diff < 0:
+                days_diff = 0
+            
             features['days_since_last_message'] = st.number_input(
                 "days_since_last_message ⭐",
-                value=0.0,
+                value=float(days_diff),
                 format="%.1f",
-                help="NEW in v2: Days since device last sent a message (inactivity detector)"
+                disabled=True,
+                help="Automatically calculated from date: Days since device last sent a message"
             )
     
     # Submit button

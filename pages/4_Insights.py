@@ -106,10 +106,10 @@ col1, col2 = st.columns([1, 1])
 
 with col1:
     # Confusion matrix heatmap
-    tp = confusion_matrix_data.get('TP', 11)
-    fp = confusion_matrix_data.get('FP', 2)
-    fn = confusion_matrix_data.get('FN', 3)
-    tn = confusion_matrix_data.get('TN', 221)
+    tp = confusion_matrix_data.get('TP', 8)
+    fp = confusion_matrix_data.get('FP', 6)
+    fn = confusion_matrix_data.get('FN', 6)
+    tn = confusion_matrix_data.get('TN', 209)
     
     fig_cm = plot_confusion_matrix(tn, fp, fn, tp)
     st.plotly_chart(fig_cm, use_container_width=True)
