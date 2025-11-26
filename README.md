@@ -511,7 +511,7 @@ Este projeto de estágio foi desenvolvido com apoio e orientação do time de **
 
 **Última atualização:** 18 de Novembro de 2025 (v2.0 FIELD-only + Discovery 0 + Research Methodology)  
 **Autor:** Leonardo Costa | Lightera LLC Internship  
-**Contato:** leonardo.costa@lightera.io
+**Contato:** leonardo.costa@lightera.com
 - **[CHANGELOG.md](CHANGELOG.md):** Timeline evolutiva completa (13 fases de desenvolvimento)
 - **[PROJECT_AUDIT_NOV17.md](docs/PROJECT_AUDIT_NOV17.md):** Auditoria de preparação para apresentação final
 
